@@ -2,8 +2,10 @@ import { z } from 'zod';
 import { randomUUID } from 'node:crypto';
 import { objectId } from '../validation.js';
 import { Product } from '../models/product.js';
-import { Order, calculateTotal } from '../models/order.js';
+import { Order, calculateTotal, assertTransition } from '../models/order.js';
 import { ApiError } from '../errors.js';
+import { StockMovement } from '../models/movement.js';
+import { transaction } from './transaction.js';
 
 export const draftInput = z
   .object({
@@ -67,4 +69,55 @@ export async function editDraft(id: string, input: z.infer<typeof draftInput>, a
   );
   if (!updated) throw new ApiError(409, 'ORDER_CHANGED', 'Order changed; reload before editing');
   return updated;
+}
+export async function confirmOrder(id: string, actorId: string) {
+  return transaction(async (session) => {
+    const order = await Order.findById(id).session(session);
+    if (!order) throw new ApiError(404, 'ORDER_NOT_FOUND', 'Order not found');
+    assertTransition(order.status, 'confirmed');
+    const items = [];
+    for (const line of order.items) {
+      const before = await Product.findOneAndUpdate(
+        { _id: line.productId, active: true, quantity: { $gte: line.quantity } },
+        { $inc: { quantity: -line.quantity } },
+        { session, new: false },
+      );
+      if (!before)
+        throw new ApiError(
+          409,
+          'INSUFFICIENT_STOCK',
+          'A product is inactive, missing, or has insufficient stock',
+        );
+      items.push({
+        productId: before._id,
+        quantity: line.quantity,
+        skuSnapshot: before.skuNormalized,
+        nameSnapshot: before.name,
+        unitPriceCents: before.unitPriceCents,
+      });
+      await StockMovement.create(
+        [
+          {
+            productId: before._id,
+            type: 'order-confirmed',
+            delta: -line.quantity,
+            beforeQuantity: before.quantity,
+            afterQuantity: before.quantity - line.quantity,
+            reason: `Confirmed ${order.orderNumber}`,
+            actorId,
+            orderId: order._id,
+          },
+        ],
+        { session },
+      );
+    }
+    order.set({
+      items,
+      totalCents: calculateTotal(items),
+      status: 'confirmed',
+      confirmedAt: new Date(),
+    });
+    order.history.push({ action: 'confirmed', actorId, at: new Date(), reason: '' });
+    return order.save({ session });
+  });
 }

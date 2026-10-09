@@ -3,6 +3,7 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Api, type Result } from './api';
 import { OrderRecord } from './order-types';
+import { HttpErrorResponse } from '@angular/common/http';
 @Component({
   selector: 'app-order-detail',
   imports: [CurrencyPipe, DatePipe, RouterLink],
@@ -13,6 +14,9 @@ import { OrderRecord } from './order-types';
     }
     @if (order(); as item) {
       <h2>{{ item.orderNumber }}</h2>
+      @if (item.status === 'draft') {
+        <button type="button" [disabled]="busy()" (click)="act('confirm')">Confirm order</button>
+      }
       @if (item.status === 'draft') {
         <a [routerLink]="['/orders', item._id, 'edit']">Edit draft</a>
       }
@@ -69,6 +73,24 @@ import { OrderRecord } from './order-types';
   `,
 })
 export class OrderDetail {
+  readonly busy = signal(false);
+  act(action: string, body: unknown = {}) {
+    this.busy.set(true);
+    this.error.set('');
+    this.api.post(`orders/${this.id}/${action}`, body).subscribe({
+      next: () => {
+        this.busy.set(false);
+        this.load();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.busy.set(false);
+        this.error.set(
+          error.error?.error?.message ?? 'Order action failed. Reload to check its current state.',
+        );
+        this.load();
+      },
+    });
+  }
   private readonly api = inject(Api);
   readonly id = inject(ActivatedRoute).snapshot.paramMap.get('id');
   readonly order = signal<OrderRecord | null>(null);

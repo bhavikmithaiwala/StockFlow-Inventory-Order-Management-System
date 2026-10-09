@@ -91,3 +91,26 @@ it('edits draft items, refreshes trusted totals, rejects duplicate lines and kee
     ).status,
   ).toBe(400);
 });
+it('confirms exactly once and captures current trusted prices in the stock transaction', async () => {
+  await Product.updateOne({ _id: productId }, { unitPriceCents: 450 });
+  const res = await request(app)
+    .post(`/api/orders/${orderId}/confirm`)
+    .set('Cookie', `sf_session=${token}`)
+    .set('Origin', 'http://localhost:4200')
+    .send({});
+  expect(res.status).toBe(200);
+  expect(res.body.data.status).toBe('confirmed');
+  expect(res.body.data.totalCents).toBe(900);
+  expect((await Product.findById(productId))!.quantity).toBe(3);
+  expect(await StockMovement.countDocuments({ orderId, type: 'order-confirmed' })).toBe(1);
+  expect(
+    (
+      await request(app)
+        .post(`/api/orders/${orderId}/confirm`)
+        .set('Cookie', `sf_session=${token}`)
+        .set('Origin', 'http://localhost:4200')
+        .send({})
+    ).status,
+  ).toBe(409);
+  expect((await Product.findById(productId))!.quantity).toBe(3);
+});

@@ -37,3 +37,5 @@ Latest feature: stock indicators 02a8d10; inventory tests follow in this commit.
 - Roadmap 38: paginated order status/search/date API plus Angular list/detail/history with actor names and price snapshots. Both production builds passed.
 
 - Roadmap 39: real multi-line draft create/edit form, searchable product lookup, duplicate checks and server-authoritative save. Angular production build passed.
+
+- Roadmap 40: complete transactional confirmation including mandatory conditional deduction and same-transaction ledger, trusted price recapture and Angular action. Both builds and 3 order API tests passed. Safety kept indivisible; follow-up 41/42 harden contention and ledger uniqueness.
