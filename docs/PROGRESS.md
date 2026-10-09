@@ -49,3 +49,5 @@ Latest feature: stock indicators 02a8d10; inventory tests follow in this commit.
 - Roadmap 44: transactional draft/confirmed cancellation with mandatory reason, exactly-once restoration/ledger and Angular action. Both builds and 7 order tests passed; fulfilled cancellation rejected.
 
 - Roadmap 45: fixed normalized-ID use in domain drafts; verified blank cancellation, draft cancellation without restock and simultaneous duplicate confirmation. Build and 9 order tests passed.
+
+- Roadmap 46: dedicated real-DB API races, all-product rollback and simultaneous cancellation; named unit/API/concurrency scripts. Full backend 40 tests passed, lint/typecheck passed. Resource-limited test workers fix default timeout under expensive scrypt; no security work-factor reduction. Order phase complete.

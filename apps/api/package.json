@@ -10,7 +10,10 @@
     "start": "node dist/server.js",
     "test": "vitest run",
     "lint": "eslint src",
-    "provision:admin": "tsx src/provision-admin.ts"
+    "provision:admin": "tsx src/provision-admin.ts",
+    "test:unit": "vitest run src/models src/security",
+    "test:api": "vitest run src/app.test.ts src/auth.test.ts src/users.test.ts src/categories.test.ts src/products.test.ts src/orders.test.ts src/services/inventory.test.ts src/concurrency.test.ts",
+    "test:concurrency": "vitest run src/concurrency.test.ts"
   },
   "dependencies": {
     "express": "^5.1.0",
