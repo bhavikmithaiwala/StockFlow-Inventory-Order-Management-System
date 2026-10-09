@@ -45,3 +45,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Roadmap 14: working reactive Angular login form with email/password validation, busy state and API error presentation. Production build passed. Backend RBAC: a03c9a5.
 
 - Roadmap 15: typed API client and signal-backed current-user state; login updates the shell identity. No localStorage auth. Angular build passed. Login form: fbe18eb.
+
+- Roadmap 16: server-verified route guard, logout and session-expiry interceptor. Angular build, 4 browser tests and full backend tests passed. Typed client: 886e2df. Phase 2 authentication/RBAC gate passed.
