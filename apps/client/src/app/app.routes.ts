@@ -85,8 +85,8 @@ export const routes: Routes = [
     path: '',
     canActivate: [authenticated],
     pathMatch: 'full',
-    loadComponent: () => import('./overview').then((m) => m.Overview),
-    title: 'System overview | StockFlow',
+    loadComponent: () => import('./dashboard').then((m) => m.Dashboard),
+    title: 'Dashboard | StockFlow',
   },
   {
     path: 'status',
