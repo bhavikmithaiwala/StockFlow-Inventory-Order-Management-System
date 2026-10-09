@@ -71,3 +71,5 @@ Latest feature: stock indicators 02a8d10; inventory tests follow in this commit.
 - Roadmap 55: duplicate SKU, spoofed stock, invalid/fractional money, malformed ID and missing-reference API coverage. 3 real product API tests passed.
 
 - Roadmap 56: draft fulfillment/processed-edit/price-spoof rejection, inactive confirmation, historical price preservation and whole-cancellation rollback at capacity. 12 real DB order tests passed.
+
+- Roadmap 57: Angular login validation/failure/success, multi-page lookup and cached-user route/session expiry browser tests. 10 ChromeHeadless tests passed.
