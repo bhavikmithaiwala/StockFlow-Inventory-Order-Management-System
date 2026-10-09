@@ -54,3 +54,29 @@ it('persists categories, enforces normalized uniqueness and protects references'
     ).status,
   ).toBe(409);
 });
+it('creates and edits supplier contact data and validates email', async () => {
+  const created = await request(app)
+    .post('/api/suppliers')
+    .set('Cookie', `sf_session=${token}`)
+    .set('Origin', 'http://localhost:4200')
+    .send({ name: 'North Supply', email: 'contact@example.test', phone: '+1 555 0100' });
+  expect(created.status).toBe(201);
+  const update = await request(app)
+    .patch(`/api/suppliers/${created.body.data._id}`)
+    .set('Cookie', `sf_session=${token}`)
+    .set('Origin', 'http://localhost:4200')
+    .send({ contactName: 'Avery' });
+  expect(update.body.data.contactName).toBe('Avery');
+  expect(
+    (await request(app).get('/api/suppliers').set('Cookie', `sf_session=${token}`)).body.meta.total,
+  ).toBe(1);
+  expect(
+    (
+      await request(app)
+        .post('/api/suppliers')
+        .set('Cookie', `sf_session=${token}`)
+        .set('Origin', 'http://localhost:4200')
+        .send({ name: 'Invalid', email: 'bad' })
+    ).status,
+  ).toBe(400);
+});

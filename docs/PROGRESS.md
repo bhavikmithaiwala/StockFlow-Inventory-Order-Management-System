@@ -51,3 +51,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Roadmap 17: normalized unique category schema and strict input validation. Build and schema test passed. Phase 2 commit: 9b6c56b; backend milestone 12 tests passed.
 
 - Roadmap 18: category list/create/update APIs, admin writes, database uniqueness and reference safeguard. Build and real DB category API test passed.
+
+- Roadmap 19: supplier contact persistence and paginated management API with strict email validation. Build and 2 catalog API tests passed. Category endpoints: 94e3e4c.

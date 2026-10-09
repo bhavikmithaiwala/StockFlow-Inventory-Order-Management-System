@@ -4,6 +4,7 @@ import { authRouter, checkOrigin } from './auth.js';
 import { errorHandler } from './errors.js';
 import { usersRouter } from './users.js';
 import { categoriesRouter } from './categories.js';
+import { suppliersRouter } from './suppliers.js';
 
 export function createApp() {
   const app = express();
@@ -19,6 +20,7 @@ export function createApp() {
   app.use('/api/auth', authRouter);
   app.use('/api/users', usersRouter);
   app.use('/api/categories', categoriesRouter);
+  app.use('/api/suppliers', suppliersRouter);
   app.use((_req, res) =>
     res.status(404).json({
       error: {
