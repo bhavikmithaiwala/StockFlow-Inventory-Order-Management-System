@@ -7,6 +7,11 @@
     </div>
     <p class="tagline">Inventory &amp; orders</p>
     <nav aria-label="Main navigation">
+      @if (session.user()) {
+        <a routerLink="/products" routerLinkActive="active" ariaCurrentWhenActive="page"
+          >Products</a
+        >
+      }
       @if (!session.user()) {
         <a routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page">Sign in</a>
       }

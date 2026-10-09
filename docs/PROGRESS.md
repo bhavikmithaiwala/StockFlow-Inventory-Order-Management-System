@@ -59,3 +59,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Roadmap 21: product create/edit/detail/deactivate with trusted zero initial stock and active reference validation in transactions. API build and real DB lifecycle test passed.
 
 - Roadmap 22: bounded product pagination, literal search, category/supplier/activity filters and allowlisted stable sorting. Build and 2 product API tests passed, including query-operator rejection. Product lifecycle: 72b6b81.
+
+- Roadmap 23: Angular products search/filter/sort/pagination, real detail view, integer-cent formatting, loading/error/empty states. Production build passed.
