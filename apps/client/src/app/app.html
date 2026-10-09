@@ -18,7 +18,9 @@
     </nav>
   </aside>
   <div class="workspace">
-    <header><span>Single warehouse</span><span>StockFlow workspace</span></header>
+    <header>
+      <span>Single warehouse</span><span>{{ session.user()?.name ?? 'StockFlow workspace' }}</span>
+    </header>
     <main id="main-content" tabindex="-1"><router-outlet /></main>
   </div>
 </div>

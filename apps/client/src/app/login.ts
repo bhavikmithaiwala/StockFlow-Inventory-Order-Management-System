@@ -1,7 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { SessionState } from './session';
 
 @Component({
   selector: 'app-login',
@@ -32,7 +33,7 @@ import { Router } from '@angular/router';
   `,
 })
 export class Login {
-  private readonly http = inject(HttpClient);
+  private readonly session = inject(SessionState);
   private readonly router = inject(Router);
   readonly form = inject(FormBuilder).nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -47,7 +48,7 @@ export class Login {
     }
     this.busy.set(true);
     this.error.set('');
-    this.http.post('/api/auth/login', this.form.getRawValue()).subscribe({
+    this.session.login(this.form.getRawValue()).subscribe({
       next: () => {
         this.busy.set(false);
         void this.router.navigateByUrl('/');

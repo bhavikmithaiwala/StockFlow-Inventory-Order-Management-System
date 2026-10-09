@@ -43,3 +43,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Roadmap 13: backend role middleware and paginated admin user management, staff provisioning and lockout protection. API build and 2 real-database RBAC tests passed. Session security: f83ff7f.
 
 - Roadmap 14: working reactive Angular login form with email/password validation, busy state and API error presentation. Production build passed. Backend RBAC: a03c9a5.
+
+- Roadmap 15: typed API client and signal-backed current-user state; login updates the shell identity. No localStorage auth. Angular build passed. Login form: fbe18eb.
