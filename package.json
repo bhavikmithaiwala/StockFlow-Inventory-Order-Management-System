@@ -1,0 +1,16 @@
+{
+  "name": "stockflow",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": ["apps/*"],
+  "engines": { "node": ">=22.13.0", "npm": ">=10" },
+  "scripts": {
+    "dev:client": "npm run dev --workspace @stockflow/client",
+    "dev:api": "npm run dev --workspace @stockflow/api",
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "check:workspace": "node scripts/check-workspace.mjs"
+  }
+}
