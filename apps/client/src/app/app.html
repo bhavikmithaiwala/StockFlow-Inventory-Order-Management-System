@@ -1,2 +1,15 @@
-<h1>StockFlow</h1>
-<router-outlet />
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="application">
+  <aside aria-label="Application sidebar">
+    <div class="brand">
+      <span aria-hidden="true">SF</span>
+      <h1>StockFlow</h1>
+    </div>
+    <p class="tagline">Inventory &amp; orders</p>
+    <nav aria-label="Main navigation"><a href="/">System overview</a></nav>
+  </aside>
+  <div class="workspace">
+    <header><span>Single warehouse</span><span>StockFlow workspace</span></header>
+    <main id="main-content" tabindex="-1"><router-outlet /></main>
+  </div>
+</div>

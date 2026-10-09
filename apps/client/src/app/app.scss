@@ -1,0 +1,78 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+.application {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  min-height: 100vh;
+}
+aside {
+  padding: 2rem 1.25rem;
+  background: #142c35;
+  color: #fff;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.brand span {
+  background: #0d756a;
+  padding: 0.6rem;
+  border-radius: 0.65rem;
+  font-weight: 700;
+}
+h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+.tagline {
+  color: #c5d5db;
+  font-size: 0.9rem;
+}
+nav {
+  margin-top: 2rem;
+}
+nav a {
+  display: block;
+  padding: 0.8rem;
+  color: #fff;
+  border-radius: 0.5rem;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.4rem 2rem;
+  border-bottom: 1px solid #d6e0e2;
+}
+main {
+  padding: 2rem;
+}
+.skip-link {
+  position: absolute;
+  top: -5rem;
+  left: 1rem;
+  z-index: 10;
+  padding: 1rem;
+  background: #fff;
+}
+.skip-link:focus {
+  top: 1rem;
+}
+@media (max-width: 700px) {
+  .application {
+    grid-template-columns: 1fr;
+  }
+  aside {
+    padding: 1rem;
+  }
+  nav {
+    margin-top: 1rem;
+  }
+  header,
+  main {
+    padding: 1rem;
+  }
+}
