@@ -4,6 +4,7 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Api, type Page } from './api';
 import { OrderRecord } from './order-types';
+import { SessionState } from './session';
 @Component({
   selector: 'app-order-list',
   imports: [FormsModule, CurrencyPipe, DatePipe, RouterLink],
@@ -83,6 +84,7 @@ import { OrderRecord } from './order-types';
   `,
 })
 export class OrderList {
+  readonly session = inject(SessionState);
   private readonly api = inject(Api);
   readonly result = signal<Page<OrderRecord> | null>(null);
   readonly loading = signal(false);
@@ -97,6 +99,7 @@ export class OrderList {
     this.error.set('');
     this.api
       .get<Page<OrderRecord>>('orders', {
+        limit: this.session.user()?.preferences?.pageSize ?? 20,
         page,
         search: this.search,
         ...(this.status ? { status: this.status } : {}),

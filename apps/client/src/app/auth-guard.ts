@@ -3,6 +3,8 @@ import { Router, type CanActivateFn } from '@angular/router';
 import { HttpErrorResponse, type HttpInterceptorFn } from '@angular/common/http';
 import { catchError, map, of, throwError } from 'rxjs';
 import { SessionState } from './session';
+export const administrative: CanActivateFn = () =>
+  inject(SessionState).user()?.role === 'admin' ? true : inject(Router).createUrlTree(['/']);
 
 export const authenticated: CanActivateFn = () => {
   const session = inject(SessionState);

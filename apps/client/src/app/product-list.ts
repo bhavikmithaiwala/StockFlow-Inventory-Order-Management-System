@@ -120,6 +120,7 @@ export class ProductList {
     this.error.set('');
     this.api
       .get<Page<ProductRecord>>('products', {
+        limit: this.session.user()?.preferences?.pageSize ?? 20,
         page,
         search: this.search,
         sort: this.sort,

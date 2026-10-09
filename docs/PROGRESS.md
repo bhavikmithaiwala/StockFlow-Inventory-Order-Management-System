@@ -65,3 +65,5 @@ Latest feature: stock indicators 02a8d10; inventory tests follow in this commit.
 - Roadmap 52: filtered whole-result CSV exports capped at 10,000 records, formula neutralization, quote/newline escaping and UTF-8 BOM. Build and 5 export/report tests passed.
 
 - Roadmap 53: Angular inventory/order/movement report filters, full-result totals, paginated tables, safe CSV downloads and meaningful empty/error states. Both builds and full lint passed. Reporting phase complete.
+
+- Roadmap 54 plus required account screens: real admin Users UI, own-profile/settings persistence, applied catalog/order page-size preference and admin route guard. Both builds and 8 auth/RBAC tests passed, including login limit, missing Origin and profile role-spoof rejection.

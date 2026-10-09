@@ -26,6 +26,7 @@ const publicUser = (user: InstanceType<typeof User>) => ({
   name: user.name,
   email: user.emailNormalized,
   role: user.role,
+  preferences: { pageSize: user.preferences?.pageSize ?? 20 },
 });
 const dummyHash = hashPassword(randomBytes(32).toString('hex'));
 
@@ -55,6 +56,25 @@ export const checkOrigin: RequestHandler = (req, _res, next) => {
 };
 
 export const authRouter = Router();
+authRouter.patch('/profile', requireAuth, async (req, res) => {
+  const input = z
+    .object({
+      name: z.string().trim().min(1).max(100),
+      preferences: z
+        .object({
+          pageSize: z.union([z.literal(10), z.literal(20), z.literal(50), z.literal(100)]),
+        })
+        .strict(),
+    })
+    .strict()
+    .parse(req.body);
+  const user = await User.findByIdAndUpdate((res.locals['user'] as { id: string }).id, input, {
+    new: true,
+    runValidators: true,
+  });
+  if (!user) throw new ApiError(404, 'USER_NOT_FOUND', 'User not found');
+  res.json({ data: publicUser(user) });
+});
 const loginLimit = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 10,

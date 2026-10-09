@@ -84,4 +84,39 @@ describe('session API with real MongoDB', () => {
       (await request(app).get('/api/auth/me').set('Cookie', 'sf_session=malformed')).status,
     ).toBe(401);
   });
+  it('persists only the current user profile and rejects role escalation', async () => {
+    const user = await User.findOne({ emailNormalized: 'admin@example.test' });
+    const token = '3'.repeat(64);
+    await Session.create({
+      userId: user!._id,
+      tokenHash: tokenHash(token),
+      expiresAt: new Date(Date.now() + 60000),
+    });
+    const profile = await request(app)
+      .patch('/api/auth/profile')
+      .set('Cookie', `sf_session=${token}`)
+      .set('Origin', 'http://localhost:4200')
+      .send({ name: 'Updated Admin', preferences: { pageSize: 50 } });
+    expect(profile.status).toBe(200);
+    expect(profile.body.data.preferences.pageSize).toBe(50);
+    expect((await User.findById(user!._id))!.name).toBe('Updated Admin');
+    expect(
+      (
+        await request(app)
+          .patch('/api/auth/profile')
+          .set('Cookie', `sf_session=${token}`)
+          .set('Origin', 'http://localhost:4200')
+          .send({ name: 'Escalation', preferences: { pageSize: 20 }, role: 'admin' })
+      ).status,
+    ).toBe(400);
+  });
+  it('rate-limits login attempts and rejects writes without an origin', async () => {
+    expect((await request(app).post('/api/auth/login').send({})).status).toBe(403);
+    let status = 0;
+    for (let attempt = 0; attempt < 11; attempt++)
+      status = (
+        await request(app).post('/api/auth/login').set('Origin', 'http://localhost:4200').send({})
+      ).status;
+    expect(status).toBe(429);
+  });
 });

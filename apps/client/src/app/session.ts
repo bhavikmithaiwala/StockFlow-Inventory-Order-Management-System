@@ -3,6 +3,7 @@ import { tap } from 'rxjs';
 import { Api, type Result } from './api';
 
 export interface CurrentUser {
+  preferences?: { pageSize: number };
   id: string;
   name: string;
   email: string;
@@ -10,6 +11,11 @@ export interface CurrentUser {
 }
 @Injectable({ providedIn: 'root' })
 export class SessionState {
+  updateProfile(input: { name: string; preferences: { pageSize: number } }) {
+    return this.api
+      .patch<Result<CurrentUser>>('auth/profile', input)
+      .pipe(tap((response) => this.user.set(response.data)));
+  }
   private readonly api = inject(Api);
   readonly user = signal<CurrentUser | null>(null);
   load() {

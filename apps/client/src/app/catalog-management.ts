@@ -151,16 +151,21 @@ export class CatalogManagement {
   load(page: number) {
     this.loading.set(true);
     this.error.set('');
-    this.api.get<Page<CategoryRecord | SupplierRecord>>(this.kind, { page }).subscribe({
-      next: (result) => {
-        this.result.set(result);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.error.set('Unable to load records. Try again.');
-        this.loading.set(false);
-      },
-    });
+    this.api
+      .get<Page<CategoryRecord | SupplierRecord>>(this.kind, {
+        page,
+        limit: this.session.user()?.preferences?.pageSize ?? 20,
+      })
+      .subscribe({
+        next: (result) => {
+          this.result.set(result);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.error.set('Unable to load records. Try again.');
+          this.loading.set(false);
+        },
+      });
   }
   edit(item: CategoryRecord | SupplierRecord) {
     this.selected = item._id;

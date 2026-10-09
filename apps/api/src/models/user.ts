@@ -7,6 +7,7 @@ const schema = new Schema(
     passwordHash: { type: String, required: true, select: false },
     role: { type: String, enum: ['admin', 'staff'], default: 'staff', required: true },
     active: { type: Boolean, default: true, required: true },
+    preferences: { pageSize: { type: Number, enum: [10, 20, 50, 100], default: 20 } },
   },
   { timestamps: true },
 );

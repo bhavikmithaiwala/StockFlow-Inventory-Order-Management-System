@@ -1,7 +1,19 @@
 import { Routes } from '@angular/router';
-import { authenticated } from './auth-guard';
+import { authenticated, administrative } from './auth-guard';
 
 export const routes: Routes = [
+  {
+    path: 'users',
+    canActivate: [authenticated, administrative],
+    loadComponent: () => import('./users').then((m) => m.Users),
+    title: 'Users | StockFlow',
+  },
+  {
+    path: 'settings',
+    canActivate: [authenticated],
+    loadComponent: () => import('./settings').then((m) => m.Settings),
+    title: 'Settings | StockFlow',
+  },
   {
     path: 'reports',
     canActivate: [authenticated],
