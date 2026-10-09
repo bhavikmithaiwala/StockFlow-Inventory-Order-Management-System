@@ -69,3 +69,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Roadmap 26: append-only audited stock ledger with reconciliation validation and mutation guards. Build and ledger test passed. Catalog UI milestone: f726a24.
 
 - Roadmap 27: receipt quantity/ledger transaction with conditional capacity check and bounded whole-transaction retries. Build and real DB receipt test passed.
+
+- Roadmap 28: signed stock adjustments with nonzero integer/reason validation, conditional bounds and atomic movements. Build and 2 real DB inventory tests passed.
