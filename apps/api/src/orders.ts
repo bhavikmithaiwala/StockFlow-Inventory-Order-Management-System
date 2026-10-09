@@ -5,9 +5,45 @@ import { draftInput, createDraft, editDraft } from './services/orders.js';
 import { Order } from './models/order.js';
 import { objectId } from './validation.js';
 import { ApiError } from './errors.js';
+import { z } from 'zod';
+import { pagination } from './validation.js';
 
 export const ordersRouter = Router();
 ordersRouter.use(requireAuth);
+export const orderQuery = pagination
+  .extend({
+    status: z.enum(['draft', 'confirmed', 'fulfilled', 'cancelled']).optional(),
+    search: z.string().trim().max(100).default(''),
+    from: z.iso.date().optional(),
+    to: z.iso.date().optional(),
+  })
+  .strict()
+  .refine((value) => !value.from || !value.to || value.from <= value.to);
+ordersRouter.get('/', async (req, res) => {
+  const query = orderQuery.parse(req.query);
+  const escaped = query.search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const filter = {
+    ...(query.status ? { status: query.status } : {}),
+    ...(escaped ? { orderNumber: { $regex: escaped, $options: 'i' } } : {}),
+    ...(query.from || query.to
+      ? {
+          createdAt: {
+            ...(query.from ? { $gte: new Date(`${query.from}T00:00:00.000Z`) } : {}),
+            ...(query.to ? { $lte: new Date(`${query.to}T23:59:59.999Z`) } : {}),
+          },
+        }
+      : {}),
+  };
+  const [data, total] = await Promise.all([
+    Order.find(filter)
+      .sort({ createdAt: -1, _id: -1 })
+      .skip((query.page - 1) * query.limit)
+      .limit(query.limit)
+      .lean(),
+    Order.countDocuments(filter),
+  ]);
+  res.json({ data, meta: { page: query.page, limit: query.limit, total } });
+});
 ordersRouter.patch('/:id', allowRoles('admin', 'staff'), async (req, res) =>
   res.json({
     data: await editDraft(
@@ -23,7 +59,9 @@ ordersRouter.post('/', allowRoles('admin', 'staff'), async (req, res) =>
   }),
 );
 ordersRouter.get('/:id', async (req, res) => {
-  const order = await Order.findById(objectId.parse(req.params['id'])).lean();
+  const order = await Order.findById(objectId.parse(req.params['id']))
+    .populate('history.actorId', 'name')
+    .lean();
   if (!order) throw new ApiError(404, 'ORDER_NOT_FOUND', 'Order not found');
   res.json({ data: order });
 });

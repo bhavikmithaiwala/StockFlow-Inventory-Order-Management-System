@@ -33,3 +33,5 @@ Latest feature: stock indicators 02a8d10; inventory tests follow in this commit.
 - Roadmap 36: validated draft creation/detail API with trusted price snapshots, server totals and unchanged stock. Build and real DB draft API test passed.
 
 - Roadmap 37: optimistic draft-only edits, trusted recalculated totals and edit history. Build and 2 real DB order tests passed.
+
+- Roadmap 38: paginated order status/search/date API plus Angular list/detail/history with actor names and price snapshots. Both production builds passed.
