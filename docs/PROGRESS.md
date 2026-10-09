@@ -35,3 +35,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Roadmap 9: user email/role validation and hashed-session schema with TTL/unique indexes and secret-field exclusion. Backend build and 5 tests passed. Design tokens commit: e3ae2ea.
 
 - Roadmap 10: salted scrypt password hashing and development-only admin provisioning from environment, refusing account overwrite. API build and password test passed. Models commit: 0be7844.
+
+- Roadmap 11: login/logout/me API, hashed opaque cookies, origin defense and central safe errors. API compilation and 2 real-MongoDB auth tests passed (login/me/logout, wrong credentials, foreign origin). Password provisioning commit: a1c2566.

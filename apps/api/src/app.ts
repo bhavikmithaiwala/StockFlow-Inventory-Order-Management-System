@@ -1,5 +1,7 @@
-import express, { type ErrorRequestHandler } from 'express';
+import express from 'express';
 import { randomUUID } from 'node:crypto';
+import { authRouter, checkOrigin } from './auth.js';
+import { errorHandler } from './errors.js';
 
 export function createApp() {
   const app = express();
@@ -11,27 +13,17 @@ export function createApp() {
   });
   app.use(express.json({ limit: '64kb' }));
   app.get('/api/health', (_req, res) => res.json({ data: { status: 'ok' } }));
+  app.use(checkOrigin);
+  app.use('/api/auth', authRouter);
   app.use((_req, res) =>
-    res
-      .status(404)
-      .json({
-        error: {
-          code: 'NOT_FOUND',
-          message: 'Endpoint not found',
-          requestId: res.locals['requestId'],
-        },
-      }),
-  );
-  const onError: ErrorRequestHandler = (error: unknown, _req, res, _next) => {
-    const malformed = error instanceof SyntaxError;
-    res.status(malformed ? 400 : 500).json({
+    res.status(404).json({
       error: {
-        code: malformed ? 'INVALID_JSON' : 'INTERNAL_ERROR',
-        message: malformed ? 'Request body is not valid JSON' : 'Unexpected server error',
+        code: 'NOT_FOUND',
+        message: 'Endpoint not found',
         requestId: res.locals['requestId'],
       },
-    });
-  };
-  app.use(onError);
+    }),
+  );
+  app.use(errorHandler);
   return app;
 }
