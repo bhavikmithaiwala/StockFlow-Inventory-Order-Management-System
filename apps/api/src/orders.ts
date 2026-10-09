@@ -1,7 +1,13 @@
 import { Router } from 'express';
 import { requireAuth } from './auth.js';
 import { allowRoles, type Actor } from './authorization.js';
-import { draftInput, createDraft, editDraft, confirmOrder } from './services/orders.js';
+import {
+  draftInput,
+  createDraft,
+  editDraft,
+  confirmOrder,
+  fulfillOrder,
+} from './services/orders.js';
 import { Order } from './models/order.js';
 import { objectId } from './validation.js';
 import { ApiError } from './errors.js';
@@ -10,6 +16,12 @@ import { pagination } from './validation.js';
 
 export const ordersRouter = Router();
 ordersRouter.use(requireAuth);
+ordersRouter.post('/:id/fulfill', allowRoles('admin'), async (req, res) => {
+  z.object({}).strict().parse(req.body);
+  res.json({
+    data: await fulfillOrder(objectId.parse(req.params['id']), (res.locals['user'] as Actor).id),
+  });
+});
 ordersRouter.post('/:id/confirm', allowRoles('admin', 'staff'), async (req, res) => {
   z.object({}).strict().parse(req.body);
   res.json({

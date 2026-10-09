@@ -129,3 +129,20 @@ export async function confirmOrder(id: string, actorId: string) {
     return order.save({ session });
   });
 }
+export async function fulfillOrder(id: string, actorId: string) {
+  const order = await Order.findOneAndUpdate(
+    { _id: id, status: 'confirmed' },
+    {
+      $set: { status: 'fulfilled', fulfilledAt: new Date() },
+      $inc: { __v: 1 },
+      $push: { history: { action: 'fulfilled', actorId, at: new Date() } },
+    },
+    { new: true, runValidators: true },
+  );
+  if (!order) {
+    const existing = await Order.findById(id);
+    if (!existing) throw new ApiError(404, 'ORDER_NOT_FOUND', 'Order not found');
+    throw new ApiError(409, 'INVALID_ORDER_STATUS', 'Only confirmed orders can be fulfilled');
+  }
+  return order;
+}

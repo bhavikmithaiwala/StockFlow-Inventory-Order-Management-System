@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Api, type Result } from './api';
 import { OrderRecord } from './order-types';
 import { HttpErrorResponse } from '@angular/common/http';
+import { SessionState } from './session';
 @Component({
   selector: 'app-order-detail',
   imports: [CurrencyPipe, DatePipe, RouterLink],
@@ -14,6 +15,9 @@ import { HttpErrorResponse } from '@angular/common/http';
     }
     @if (order(); as item) {
       <h2>{{ item.orderNumber }}</h2>
+      @if (item.status === 'confirmed' && session.user()?.role === 'admin') {
+        <button type="button" [disabled]="busy()" (click)="act('fulfill')">Fulfill order</button>
+      }
       @if (item.status === 'draft') {
         <button type="button" [disabled]="busy()" (click)="act('confirm')">Confirm order</button>
       }
@@ -73,6 +77,7 @@ import { HttpErrorResponse } from '@angular/common/http';
   `,
 })
 export class OrderDetail {
+  readonly session = inject(SessionState);
   readonly busy = signal(false);
   act(action: string, body: unknown = {}) {
     this.busy.set(true);

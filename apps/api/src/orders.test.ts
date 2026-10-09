@@ -153,3 +153,35 @@ it('enforces unique per-product order movements in the database', async () => {
   ).rejects.toMatchObject({ code: 11000 });
   expect(await StockMovement.countDocuments({ orderId })).toBe(1);
 });
+it('fulfills only as admin without a second deduction', async () => {
+  expect(
+    (
+      await request(app)
+        .post(`/api/orders/${orderId}/fulfill`)
+        .set('Cookie', `sf_session=${token}`)
+        .set('Origin', 'http://localhost:4200')
+        .send({})
+    ).status,
+  ).toBe(403);
+  await User.updateOne({ _id: actorId }, { role: 'admin' });
+  expect(
+    (
+      await request(app)
+        .post(`/api/orders/${orderId}/fulfill`)
+        .set('Cookie', `sf_session=${token}`)
+        .set('Origin', 'http://localhost:4200')
+        .send({})
+    ).body.data.status,
+  ).toBe('fulfilled');
+  expect((await Product.findById(productId))!.quantity).toBe(3);
+  expect(await StockMovement.countDocuments({ orderId })).toBe(1);
+  expect(
+    (
+      await request(app)
+        .post(`/api/orders/${orderId}/fulfill`)
+        .set('Cookie', `sf_session=${token}`)
+        .set('Origin', 'http://localhost:4200')
+        .send({})
+    ).status,
+  ).toBe(409);
+});
