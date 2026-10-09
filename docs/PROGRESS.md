@@ -33,3 +33,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Roadmap 8: accessible color/form/table tokens, visible keyboard focus, reduced-motion support. Production build and 2 ChromeHeadless tests passed. Navigation commit: 8547e5f. Phase 1 complete with Docker verification explicitly blocked; local replica-set transactions verified.
 
 - Roadmap 9: user email/role validation and hashed-session schema with TTL/unique indexes and secret-field exclusion. Backend build and 5 tests passed. Design tokens commit: e3ae2ea.
+
+- Roadmap 10: salted scrypt password hashing and development-only admin provisioning from environment, refusing account overwrite. API build and password test passed. Models commit: 0be7844.

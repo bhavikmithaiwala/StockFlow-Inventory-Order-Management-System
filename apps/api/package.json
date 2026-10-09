@@ -9,7 +9,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "start": "node dist/server.js",
     "test": "vitest run",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "provision:admin": "tsx src/provision-admin.ts"
   },
   "dependencies": {
     "express": "^5.1.0",
