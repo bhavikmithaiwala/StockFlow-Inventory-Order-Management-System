@@ -106,3 +106,20 @@ it('filters and paginates movement history with populated product and actor', as
     ).status,
   ).toBe(400);
 });
+it('includes stock at reorder threshold and excludes inactive products from alerts', async () => {
+  const res = await request(createApp())
+    .get('/api/inventory/low-stock')
+    .set('Cookie', `sf_session=${'e'.repeat(64)}`);
+  expect(res.status).toBe(200);
+  expect(res.body.meta.total).toBe(1);
+  expect(res.body.data[0].quantity).toBe(5);
+  await Product.updateOne({ _id: productId }, { active: false });
+  expect(
+    (
+      await request(createApp())
+        .get('/api/inventory/low-stock')
+        .set('Cookie', `sf_session=${'e'.repeat(64)}`)
+    ).body.meta.total,
+  ).toBe(0);
+  await Product.updateOne({ _id: productId }, { active: true });
+});

@@ -77,3 +77,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Roadmap 30: real stock receive/adjust form, product stock lookup, signed quantity/reason validation and post-commit stock refresh. Angular build passed.
 
 - Roadmap 31: product/type/date-filtered paginated ledger API and Angular audit table with actor, delta, before/after and reason. Both builds and 4 real DB inventory tests passed.
+
+- Roadmap 32: active-product low-stock endpoint includes reorder-threshold equality, sorts empty stock first and paginates. Build and 5 inventory tests passed.

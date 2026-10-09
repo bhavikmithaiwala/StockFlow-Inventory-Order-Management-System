@@ -5,9 +5,23 @@ import { receiptInput, adjustmentInput, receiveStock, adjustStock } from './serv
 import { z } from 'zod';
 import { objectId, pagination } from './validation.js';
 import { StockMovement } from './models/movement.js';
+import { Product } from './models/product.js';
 
 export const inventoryRouter = Router();
 inventoryRouter.use(requireAuth);
+inventoryRouter.get('/low-stock', async (req, res) => {
+  const { page, limit } = pagination.strict().parse(req.query);
+  const filter = { active: true, $expr: { $lte: ['$quantity', '$reorderLevel'] } };
+  const [data, total] = await Promise.all([
+    Product.find(filter)
+      .sort({ quantity: 1, _id: 1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean(),
+    Product.countDocuments(filter),
+  ]);
+  res.json({ data, meta: { page, limit, total } });
+});
 export const movementQuery = pagination
   .extend({
     productId: objectId.optional(),
