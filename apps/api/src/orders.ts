@@ -7,6 +7,7 @@ import {
   editDraft,
   confirmOrder,
   fulfillOrder,
+  cancelOrder,
 } from './services/orders.js';
 import { Order } from './models/order.js';
 import { objectId } from './validation.js';
@@ -16,6 +17,19 @@ import { pagination } from './validation.js';
 
 export const ordersRouter = Router();
 ordersRouter.use(requireAuth);
+ordersRouter.post('/:id/cancel', allowRoles('admin', 'staff'), async (req, res) => {
+  const input = z
+    .object({ reason: z.string().trim().min(1).max(500) })
+    .strict()
+    .parse(req.body);
+  res.json({
+    data: await cancelOrder(
+      objectId.parse(req.params['id']),
+      input.reason,
+      (res.locals['user'] as Actor).id,
+    ),
+  });
+});
 ordersRouter.post('/:id/fulfill', allowRoles('admin'), async (req, res) => {
   z.object({}).strict().parse(req.body);
   res.json({

@@ -45,3 +45,5 @@ Latest feature: stock indicators 02a8d10; inventory tests follow in this commit.
 - Roadmap 42: unique database order/product/type ledger constraint and type-specific audit direction/reference validation. Build and 6 targeted tests passed; duplicate order movement rejected by MongoDB.
 
 - Roadmap 43: admin-only fulfillment changes status/history atomically without stock mutation; Angular fulfill action. Both builds and 6 order tests passed, including staff denial and repeat rejection.
+
+- Roadmap 44: transactional draft/confirmed cancellation with mandatory reason, exactly-once restoration/ledger and Angular action. Both builds and 7 order tests passed; fulfilled cancellation rejected.

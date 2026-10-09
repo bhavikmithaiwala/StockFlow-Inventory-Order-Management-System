@@ -146,3 +146,53 @@ export async function fulfillOrder(id: string, actorId: string) {
   }
   return order;
 }
+export async function cancelOrder(id: string, reason: string, actorId: string) {
+  reason = z.string().trim().min(1).max(500).parse(reason);
+  return transaction(async (session) => {
+    const snapshot = await Order.findById(id).session(session);
+    if (!snapshot) throw new ApiError(404, 'ORDER_NOT_FOUND', 'Order not found');
+    assertTransition(snapshot.status, 'cancelled');
+    const order = await Order.findOneAndUpdate(
+      { _id: id, status: snapshot.status, __v: snapshot.__v },
+      { $inc: { __v: 1 } },
+      { session, new: true },
+    );
+    if (!order)
+      throw new ApiError(409, 'ORDER_CHANGED', 'Order changed; reload before cancellation');
+    if (order.status === 'confirmed') {
+      for (const line of [...order.items].sort((a, b) =>
+        a.productId.toString().localeCompare(b.productId.toString()),
+      )) {
+        const before = await Product.findOneAndUpdate(
+          { _id: line.productId, quantity: { $lte: 1000000 - line.quantity } },
+          { $inc: { quantity: line.quantity } },
+          { session, new: false },
+        );
+        if (!before)
+          throw new ApiError(
+            409,
+            'RESTOCK_CONFLICT',
+            'Product missing or stock capacity exceeded; cancellation rolled back',
+          );
+        await StockMovement.create(
+          [
+            {
+              productId: before._id,
+              type: 'order-cancelled',
+              delta: line.quantity,
+              beforeQuantity: before.quantity,
+              afterQuantity: before.quantity + line.quantity,
+              reason,
+              actorId,
+              orderId: order._id,
+            },
+          ],
+          { session },
+        );
+      }
+    }
+    order.set({ status: 'cancelled', cancelledAt: new Date(), cancellationReason: reason });
+    order.history.push({ action: 'cancelled', actorId, at: new Date(), reason });
+    return order.save({ session });
+  });
+}

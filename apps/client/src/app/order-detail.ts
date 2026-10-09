@@ -5,9 +5,10 @@ import { Api, type Result } from './api';
 import { OrderRecord } from './order-types';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SessionState } from './session';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 @Component({
   selector: 'app-order-detail',
-  imports: [CurrencyPipe, DatePipe, RouterLink],
+  imports: [CurrencyPipe, DatePipe, RouterLink, ReactiveFormsModule],
   template: `
     <a routerLink="/orders">Back to orders</a>
     @if (error()) {
@@ -15,6 +16,18 @@ import { SessionState } from './session';
     }
     @if (order(); as item) {
       <h2>{{ item.orderNumber }}</h2>
+      @if (item.status === 'draft' || item.status === 'confirmed') {
+        <section class="panel">
+          <label for="cancellation-reason">Cancellation reason</label
+          ><input id="cancellation-reason" [formControl]="reason" maxlength="500" /><button
+            type="button"
+            [disabled]="busy() || !reason.value.trim()"
+            (click)="act('cancel', { reason: reason.value })"
+          >
+            Cancel order
+          </button>
+        </section>
+      }
       @if (item.status === 'confirmed' && session.user()?.role === 'admin') {
         <button type="button" [disabled]="busy()" (click)="act('fulfill')">Fulfill order</button>
       }
@@ -77,6 +90,7 @@ import { SessionState } from './session';
   `,
 })
 export class OrderDetail {
+  readonly reason = new FormControl('', { nonNullable: true });
   readonly session = inject(SessionState);
   readonly busy = signal(false);
   act(action: string, body: unknown = {}) {

@@ -9,7 +9,7 @@ import { Order } from './models/order.js';
 import { StockMovement } from './models/movement.js';
 import { tokenHash } from './auth.js';
 import { openTestDatabase, closeTestDatabase } from './test-database.js';
-import { createDraft, confirmOrder } from './services/orders.js';
+import { createDraft, confirmOrder, cancelOrder } from './services/orders.js';
 const token = 'f'.repeat(64);
 const app = createApp();
 let productId: string;
@@ -184,4 +184,27 @@ it('fulfills only as admin without a second deduction', async () => {
         .send({})
     ).status,
   ).toBe(409);
+});
+it('cancels confirmed orders and restores stock exactly once', async () => {
+  const draft = await createDraft({ items: [{ productId, quantity: 1 }] }, actorId);
+  await confirmOrder(draft.id, actorId);
+  expect((await Product.findById(productId))!.quantity).toBe(2);
+  const res = await request(app)
+    .post(`/api/orders/${draft.id}/cancel`)
+    .set('Cookie', `sf_session=${token}`)
+    .set('Origin', 'http://localhost:4200')
+    .send({ reason: 'Customer changed plans' });
+  expect(res.status).toBe(200);
+  expect(res.body.data.status).toBe('cancelled');
+  expect((await Product.findById(productId))!.quantity).toBe(3);
+  expect(await StockMovement.countDocuments({ orderId: draft._id, type: 'order-cancelled' })).toBe(
+    1,
+  );
+  await expect(cancelOrder(draft.id, 'Duplicate cancellation', actorId)).rejects.toThrow(
+    'Cannot change',
+  );
+  await expect(cancelOrder(orderId, 'Fulfilled cancellation', actorId)).rejects.toThrow(
+    'Cannot change',
+  );
+  expect((await Product.findById(productId))!.quantity).toBe(3);
 });
