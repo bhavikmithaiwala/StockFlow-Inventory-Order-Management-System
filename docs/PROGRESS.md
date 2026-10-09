@@ -73,3 +73,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Roadmap 28: signed stock adjustments with nonzero integer/reason validation, conditional bounds and atomic movements. Build and 2 real DB inventory tests passed.
 
 - Roadmap 29: receive/adjust endpoints derive actor from session; staff can receive, only admins adjust. Build and 3 real DB tests passed, including staff restrictions and actor spoof rejection.
+
+- Roadmap 30: real stock receive/adjust form, product stock lookup, signed quantity/reason validation and post-commit stock refresh. Angular build passed.
