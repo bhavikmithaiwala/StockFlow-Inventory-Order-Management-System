@@ -18,3 +18,6 @@ No application tests or production builds have run yet. Existing `.vscode` files
 
 - Roadmap 2 verified: Angular 20 standalone client, API proxy, production build and TypeScript check; 2 ChromeHeadless component tests passed. Foundation commit: 99c501d.
 - User approved local MongoDB instead of Docker verification; Docker remains an explicitly documented gap.
+
+- Roadmap 3 verified: Express 5 TypeScript API, validated environment, request IDs, safe JSON errors and graceful shutdown. Backend compilation and 3 Supertest/Vitest HTTP tests passed. Angular commit: 15eb7a2.
+- Angular build/test sandbox access failures were resolved by executing with approved filesystem access.
