@@ -62,6 +62,11 @@
     <header>
       <span>Single warehouse</span><span>{{ session.user()?.name ?? 'StockFlow workspace' }}</span>
     </header>
-    <main id="main-content" tabindex="-1"><router-outlet /></main>
+    <main id="main-content" tabindex="-1">
+      @if (logoutError()) {
+        <p class="error" role="alert">{{ logoutError() }}</p>
+      }
+      <router-outlet />
+    </main>
   </div>
 </div>

@@ -6,8 +6,11 @@ const environment = z.object({
   MONGODB_URI: z
     .string()
     .startsWith('mongodb')
-    .default('mongodb://127.0.0.1:27018/stockflow?replicaSet=rs0'),
-  APP_ORIGIN: z.url().default('http://localhost:4200'),
+    .default('mongodb://127.0.0.1:27018/stockflow?replicaSet=rs0&directConnection=true'),
+  APP_ORIGIN: z
+    .url()
+    .default('http://localhost:4200')
+    .transform((value) => new URL(value).origin),
 });
 
 export const config = environment.parse(process.env);

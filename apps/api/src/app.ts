@@ -10,18 +10,40 @@ import { inventoryRouter } from './inventory.js';
 import { ordersRouter } from './orders.js';
 import { dashboardRouter } from './dashboard.js';
 import { reportsRouter } from './reports.js';
+import helmet from 'helmet';
+import { config } from './config.js';
+import { z } from 'zod';
 
 export function createApp() {
   const app = express();
   app.disable('x-powered-by');
+  app.use(helmet());
   app.use((_req, res, next) => {
     res.locals['requestId'] = randomUUID();
     res.setHeader('X-Request-ID', res.locals['requestId']);
+    const started = Date.now();
+    res.on('finish', () => {
+      if (config.NODE_ENV !== 'test')
+        console.log(
+          JSON.stringify({
+            event: 'http_request',
+            requestId: res.locals['requestId'],
+            method: _req.method,
+            route: _req.route?.path ?? 'unmatched',
+            status: res.statusCode,
+            durationMs: Date.now() - started,
+          }),
+        );
+    });
     next();
   });
   app.use(express.json({ limit: '64kb' }));
   app.get('/api/health', (_req, res) => res.json({ data: { status: 'ok' } }));
   app.use(checkOrigin);
+  app.use((req, _res, next) => {
+    if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method)) z.object({}).strict().parse(req.query);
+    next();
+  });
   app.use('/api/auth', authRouter);
   app.use('/api/users', usersRouter);
   app.use('/api/categories', categoriesRouter);

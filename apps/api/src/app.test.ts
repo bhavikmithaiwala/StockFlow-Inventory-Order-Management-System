@@ -9,6 +9,8 @@ describe('API foundation', () => {
     expect(res.body.data.status).toBe('ok');
     expect(res.headers['x-request-id']).toMatch(/^[a-f0-9-]{36}$/);
     expect(res.headers['x-powered-by']).toBeUndefined();
+    expect(res.headers['x-content-type-options']).toBe('nosniff');
+    expect(res.headers['x-frame-options']).toBe('SAMEORIGIN');
   });
   it('returns predictable missing endpoint errors', async () => {
     const res = await request(createApp()).get('/api/absent');
@@ -22,6 +24,16 @@ describe('API foundation', () => {
       .send('{');
     expect(res.status).toBe(400);
     expect(res.body.error.code).toBe('INVALID_JSON');
+    expect(res.body.error.stack).toBeUndefined();
+  });
+  it('reports oversized JSON as a safe 413 with request ID', async () => {
+    const res = await request(createApp())
+      .post('/api/auth/login')
+      .set('Origin', 'http://localhost:4200')
+      .send({ padding: 'x'.repeat(70000) });
+    expect(res.status).toBe(413);
+    expect(res.body.error.code).toBe('PAYLOAD_TOO_LARGE');
+    expect(res.body.error.requestId).toBeDefined();
     expect(res.body.error.stack).toBeUndefined();
   });
 });

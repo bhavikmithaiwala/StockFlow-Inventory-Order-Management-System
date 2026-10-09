@@ -75,3 +75,5 @@ Latest feature: stock indicators 02a8d10; inventory tests follow in this commit.
 - Roadmap 57: Angular login validation/failure/success, multi-page lookup and cached-user route/session expiry browser tests. 10 ChromeHeadless tests passed.
 
 - Roadmap 58: 2 Playwright workflows passed in installed Chrome with isolated real MongoDB: catalog/receipt/confirm/fulfill/cancel/report CSV and direct staff permission checks. Real screenshots and workflow WebM captured; navigation synchronization issue fixed in test. Evidence is from actual one-product E2E data.
+
+- Roadmap 59: security headers, safe 413/model errors, structured request logs excluding inputs, strict write queries, .env loading and canonical origin; transactional category reference guard closes create/deactivate race. Failed logout now displays an honest retry error. Both builds and full backend suite passed.

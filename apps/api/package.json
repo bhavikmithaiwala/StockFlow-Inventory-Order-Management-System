@@ -4,20 +4,21 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "node --env-file-if-exists=../../.env --import tsx --watch src/server.ts",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "start": "node dist/server.js",
+    "start": "node --env-file-if-exists=../../.env dist/server.js",
     "test": "vitest run",
     "lint": "eslint src",
     "provision:admin": "tsx src/provision-admin.ts",
-    "test:unit": "vitest run src/models src/security",
-    "test:api": "vitest run src/app.test.ts src/auth.test.ts src/users.test.ts src/categories.test.ts src/products.test.ts src/orders.test.ts src/services/inventory.test.ts src/concurrency.test.ts",
+    "test:unit": "vitest run src/models src/security src/services/csv.test.ts",
+    "test:api": "vitest run src/app.test.ts src/auth.test.ts src/users.test.ts src/categories.test.ts src/products.test.ts src/orders.test.ts src/services/inventory.test.ts src/concurrency.test.ts src/dashboard.test.ts",
     "test:concurrency": "vitest run src/concurrency.test.ts"
   },
   "dependencies": {
     "express": "^5.1.0",
     "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
     "mongoose": "^8.19.0",
     "zod": "^4.1.0"
   },

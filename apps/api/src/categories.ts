@@ -6,21 +6,30 @@ import { requireAuth } from './auth.js';
 import { allowRoles } from './authorization.js';
 import { ApiError } from './errors.js';
 import { objectId, pagination } from './validation.js';
+import { transaction } from './services/transaction.js';
 
 export async function updateCategory(
   id: string,
   input: z.infer<ReturnType<typeof categoryInput.partial>>,
 ) {
-  const category = await Category.findById(id);
-  if (!category) throw new ApiError(404, 'CATEGORY_NOT_FOUND', 'Category not found');
-  if (
-    input.active === false &&
-    (await mongoose.connection.collection('products').countDocuments({ categoryId: category._id }))
-  ) {
-    throw new ApiError(409, 'CATEGORY_REFERENCED', 'Referenced categories cannot be deactivated');
-  }
-  Object.assign(category, input);
-  return category.save();
+  return transaction(async (session) => {
+    const category = await Category.findByIdAndUpdate(
+      id,
+      { $inc: { __v: 1 } },
+      { new: true, session },
+    );
+    if (!category) throw new ApiError(404, 'CATEGORY_NOT_FOUND', 'Category not found');
+    if (
+      input.active === false &&
+      (await mongoose.connection
+        .collection('products')
+        .countDocuments({ categoryId: category._id }, { session }))
+    ) {
+      throw new ApiError(409, 'CATEGORY_REFERENCED', 'Referenced categories cannot be deactivated');
+    }
+    Object.assign(category, input);
+    return category.save({ session });
+  });
 }
 export const categoriesRouter = Router();
 categoriesRouter.use(requireAuth);
