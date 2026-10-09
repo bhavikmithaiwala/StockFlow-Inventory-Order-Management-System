@@ -11,6 +11,12 @@ export interface Result<T> {
 }
 @Injectable({ providedIn: 'root' })
 export class Api {
+  download(path: string, query: Record<string, string | number | boolean>) {
+    return this.http.get(`/api/${path}`, {
+      params: new HttpParams({ fromObject: query }),
+      responseType: 'blob',
+    });
+  }
   async all<T>(path: string): Promise<T[]> {
     const records: T[] = [];
     for (let page = 1; ; page++) {

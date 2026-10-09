@@ -8,6 +8,9 @@
     <p class="tagline">Inventory &amp; orders</p>
     <nav aria-label="Main navigation">
       @if (session.user()) {
+        <a routerLink="/reports" routerLinkActive="active" ariaCurrentWhenActive="page">Reports</a>
+      }
+      @if (session.user()) {
         <a routerLink="/orders" routerLinkActive="active" ariaCurrentWhenActive="page">Orders</a>
       }
       @if (session.user()) {

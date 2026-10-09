@@ -63,3 +63,5 @@ Latest feature: stock indicators 02a8d10; inventory tests follow in this commit.
 - Roadmap 51: filtered paginated order and movement reports with validated UTC date ranges, statuses, product/type filters and populated audit references. Build and 3 real report tests passed.
 
 - Roadmap 52: filtered whole-result CSV exports capped at 10,000 records, formula neutralization, quote/newline escaping and UTF-8 BOM. Build and 5 export/report tests passed.
+
+- Roadmap 53: Angular inventory/order/movement report filters, full-result totals, paginated tables, safe CSV downloads and meaningful empty/error states. Both builds and full lint passed. Reporting phase complete.
