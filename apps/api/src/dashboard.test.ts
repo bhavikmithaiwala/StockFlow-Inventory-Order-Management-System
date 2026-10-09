@@ -49,4 +49,5 @@ it('aggregates actual inventory, order and movement records', async () => {
   expect(res.body.data.orderStatuses).toEqual([{ _id: 'draft', count: 1 }]);
   expect(res.body.data.recentMovements).toHaveLength(1);
   expect(res.body.data.recentOrders).toHaveLength(1);
+  expect(res.body.data.categoryBreakdown).toMatchObject([{ products: 1, units: 3 }]);
 });

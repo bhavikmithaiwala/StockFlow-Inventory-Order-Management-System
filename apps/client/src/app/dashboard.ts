@@ -1,4 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { SummaryChart } from './summary-chart';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
@@ -13,12 +14,13 @@ export interface DashboardStats {
   inventoryValueCents: number;
   lowStockCount: number;
   orderStatuses: { _id: string; count: number }[];
+  categoryBreakdown: { name: string; units: number; products: number }[];
   recentOrders: OrderRecord[];
   recentMovements: MovementRecord[];
 }
 @Component({
   selector: 'app-dashboard',
-  imports: [CurrencyPipe, DatePipe, RouterLink],
+  imports: [CurrencyPipe, DatePipe, RouterLink, SummaryChart],
   styles: `
     .summary {
       display: grid;
@@ -32,6 +34,14 @@ export interface DashboardStats {
   `,
   template: `
     <h2>Warehouse dashboard</h2>
+    @if (stats()) {
+      <div class="summary">
+        <app-summary-chart title="Orders by status" [data]="orderBars()" /><app-summary-chart
+          title="Units by category"
+          [data]="categoryBars()"
+        />
+      </div>
+    }
     <button type="button" (click)="load()" [disabled]="loading()">Refresh dashboard</button>
     @if (loading()) {
       <p role="status">Loading warehouse activity…</p>
@@ -107,6 +117,14 @@ export interface DashboardStats {
   `,
 })
 export class Dashboard {
+  readonly orderBars = computed(
+    () => this.stats()?.orderStatuses.map((item) => ({ label: item._id, value: item.count })) ?? [],
+  );
+  readonly categoryBars = computed(
+    () =>
+      this.stats()?.categoryBreakdown.map((item) => ({ label: item.name, value: item.units })) ??
+      [],
+  );
   private readonly api = inject(Api);
   readonly stats = signal<DashboardStats | null>(null);
   readonly lowStock = signal<ProductRecord[]>([]);
