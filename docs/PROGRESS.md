@@ -53,3 +53,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Roadmap 18: category list/create/update APIs, admin writes, database uniqueness and reference safeguard. Build and real DB category API test passed.
 
 - Roadmap 19: supplier contact persistence and paginated management API with strict email validation. Build and 2 catalog API tests passed. Category endpoints: 94e3e4c.
+
+- Roadmap 20: normalized unique SKU, indexed product references, integer cents/stock constraints and strict product input excluding client quantity. Build and model test passed.
