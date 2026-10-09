@@ -14,8 +14,10 @@ import helmet from 'helmet';
 import { config } from './config.js';
 import { z } from 'zod';
 import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
+import mongoose from 'mongoose';
 
-export function createApp() {
+export function createApp(staticDirectory?: string) {
   const app = express();
   app.disable('x-powered-by');
   app.use(helmet());
@@ -40,6 +42,24 @@ export function createApp() {
   });
   app.use(express.json({ limit: '64kb' }));
   app.get('/api/health', (_req, res) => res.json({ data: { status: 'ok' } }));
+  app.get('/api/ready', async (_req, res) => {
+    try {
+      if (mongoose.connection.readyState !== 1) throw new Error('Database disconnected');
+      const hello = await mongoose.connection
+        .db!.admin()
+        .command({ hello: 1 }, { timeoutMS: 3000 });
+      if (!hello.setName || !hello.isWritablePrimary) throw new Error('Replica set not writable');
+      res.json({ data: { status: 'ready', replicaSet: hello.setName } });
+    } catch {
+      res.status(503).json({
+        error: {
+          code: 'DATABASE_UNAVAILABLE',
+          message: 'Database is not ready',
+          requestId: res.locals['requestId'],
+        },
+      });
+    }
+  });
   app.get('/api/openapi.json', (_req, res) =>
     res.sendFile(fileURLToPath(new URL('../../../docs/openapi.json', import.meta.url))),
   );
@@ -57,6 +77,19 @@ export function createApp() {
   app.use('/api/orders', ordersRouter);
   app.use('/api/dashboard', dashboardRouter);
   app.use('/api/reports', reportsRouter);
+  if (staticDirectory) {
+    app.use(express.static(staticDirectory));
+    app.get('/{*path}', (req, res, next) => {
+      if (
+        req.path === '/api' ||
+        req.path.startsWith('/api/') ||
+        !req.accepts('html') ||
+        /\.[a-z0-9]+$/i.test(req.path)
+      )
+        return next();
+      res.sendFile(join(staticDirectory, 'index.html'));
+    });
+  }
   app.use((_req, res) =>
     res.status(404).json({
       error: {

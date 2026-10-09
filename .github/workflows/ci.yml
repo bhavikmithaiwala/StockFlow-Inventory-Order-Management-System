@@ -59,6 +59,8 @@ jobs:
         run: npm run test:e2e
       - name: Runtime dependency audit
         run: npm audit --omit=dev
+      - name: Compiled full-stack production browser probe
+        run: node scripts/check-production.mjs
       - name: Upload actual workflow evidence
         if: always()
         uses: actions/upload-artifact@v4

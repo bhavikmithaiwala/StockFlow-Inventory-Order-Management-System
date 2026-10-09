@@ -337,6 +337,19 @@ operation(
   { type: 'object' },
   { public: true },
 );
+operation(
+  '/ready',
+  'get',
+  'Database replica-set primary readiness (503 when unavailable)',
+  object({
+    data: object({ status: { type: 'string', enum: ['ready'] }, replicaSet: { type: 'string' } }),
+  }),
+  { public: true },
+);
+paths['/ready'].get.responses['503'] = {
+  description: 'Database unavailable or not a writable replica-set primary',
+  content: { 'application/json': { schema: ref('Error') } },
+};
 operation('/auth/login', 'post', 'Create an eight-hour opaque cookie session', data('PublicUser'), {
   input: 'LoginInput',
   public: true,

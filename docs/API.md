@@ -1,6 +1,6 @@
 # StockFlow API
 
-The complete [OpenAPI 3.0.3 contract](openapi.json) is also served at `GET /api/openapi.json`. Import it into an OpenAPI client. Regenerate with `node scripts/generate-openapi.mjs`; validate with `node scripts/check-openapi.mjs`.
+The complete [OpenAPI 3.0.3 contract](openapi.json) is also served at `GET /api/openapi.json`. Import it into an OpenAPI client. Regenerate with `node scripts/generate-openapi.mjs`, format with `npx prettier --write docs/openapi.json`, then validate with `node scripts/check-openapi.mjs`. There are 36 operations including process health and real database readiness (503 when unavailable).
 
 Development base URL: `http://localhost:3000/api`. Angular proxies `/api` from port 4200. Authentication uses an HttpOnly session cookie, never a browser storage token. Every write, including login, must send the exact configured `APP_ORIGIN` as its Origin header. Unknown body properties and write query parameters are rejected. Reads require authentication except health and this contract.
 

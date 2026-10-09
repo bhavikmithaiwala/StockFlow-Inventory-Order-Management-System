@@ -3,6 +3,12 @@ import request from 'supertest';
 import { createApp } from './app.js';
 
 describe('API foundation', () => {
+  it('reports unavailable database readiness independently of process liveness', async () => {
+    const res = await request(createApp()).get('/api/ready');
+    expect(res.status).toBe(503);
+    expect(res.body.error.code).toBe('DATABASE_UNAVAILABLE');
+    expect(res.body.error.requestId).toBeDefined();
+  });
   it('serves the real public API contract', async () => {
     const res = await request(createApp()).get('/api/openapi.json');
     expect(res.status).toBe(200);

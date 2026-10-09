@@ -74,6 +74,8 @@ npm run seed
 
 Compose defines MongoDB 8.0 with `rs0`, persistent volume, loopback port mapping and primary health check. **Docker execution is unverified on this workstation:** Docker Desktop is absent; the user approved local MongoDB. [CI](docs/CI.md) exercises Compose on Linux once pushed. YAML validation does not establish container startup.
 
+Compiled full-stack startup is documented in [PRODUCTION.md](docs/PRODUCTION.md). `node scripts/check-production.mjs` verifies the built application in a real browser on an isolated database.
+
 ## Actual workflow evidence
 
 [Watch the recorded browser workflow](docs/demo/stockflow-workflow.webm). [Orders](docs/screenshots/orders.png), [stock movements](docs/screenshots/movements.png) and [inventory report](docs/screenshots/reports.png) screenshots are captured by the real Playwright test.
@@ -105,7 +107,7 @@ npm run test:e2e
 npm audit --omit=dev
 ```
 
-Latest completed checks before final release gate: **54 backend tests**, **10 Angular ChromeHeadless tests**, **2 Playwright workflows**, both production builds, full lint and real transaction commit/rollback. The three dedicated concurrency tests are included in the backend total. [PROGRESS.md](docs/PROGRESS.md) records current verification and blockers. GitHub Actions runs these principal checks and retains evidence; local results do not assert a remote CI pass.
+Final local release checks: **55 backend tests** (8 unit + 47 API/integration, including 3 dedicated concurrency cases), **10 Angular ChromeHeadless tests**, **2 Playwright workflows**, clean install, lint/format/typecheck, both production builds, real transaction commit/rollback and the compiled full-stack production browser probe passed. [PROGRESS.md](docs/PROGRESS.md) records verification and blockers. GitHub Actions runs these principal checks and retains evidence; local results do not assert a remote CI pass.
 
 ## Design decisions and limitations
 
@@ -115,7 +117,7 @@ The UI displays USD and values stock at selling price, not purchase cost. CSV ca
 
 Runtime dependency audit passed with zero findings. Six development-only high findings remain through Karma/braces, with no patched braces release available at verification; critical test-worker findings were removed by upgrading Vitest. See [dependency verification](docs/DEPENDENCIES.md).
 
-Work follows the meaningful [65-step roadmap](docs/COMMIT_ROADMAP.md) with additional architecture/security corrections. Existing history is preserved and new commits use actual development dates. Obtain every current hash and timestamp with:
+Work follows the meaningful [65-step roadmap](docs/COMMIT_ROADMAP.md) with additional architecture/security corrections. Existing history is preserved and new commits use actual development dates. [Commit inventory](docs/COMMITS.md) records incremental hashes and dates. Obtain the complete current report with `node scripts/commit-report.mjs`, or:
 
 ```powershell
 git log --reverse --format='%h %aI %s' 09b8d2c..HEAD
