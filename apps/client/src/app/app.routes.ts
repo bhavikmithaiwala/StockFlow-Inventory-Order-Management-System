@@ -3,6 +3,20 @@ import { authenticated } from './auth-guard';
 
 export const routes: Routes = [
   {
+    path: 'categories',
+    data: { kind: 'categories' },
+    canActivate: [authenticated],
+    loadComponent: () => import('./catalog-management').then((m) => m.CatalogManagement),
+    title: 'Categories | StockFlow',
+  },
+  {
+    path: 'suppliers',
+    data: { kind: 'suppliers' },
+    canActivate: [authenticated],
+    loadComponent: () => import('./catalog-management').then((m) => m.CatalogManagement),
+    title: 'Suppliers | StockFlow',
+  },
+  {
     path: 'products/new',
     canActivate: [authenticated],
     loadComponent: () => import('./product-editor').then((m) => m.ProductEditor),

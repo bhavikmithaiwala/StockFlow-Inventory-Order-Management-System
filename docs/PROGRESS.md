@@ -63,3 +63,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Roadmap 23: Angular products search/filter/sort/pagination, real detail view, integer-cent formatting, loading/error/empty states. Production build passed.
 
 - Roadmap 24: create/edit reactive product forms, paginated category/supplier lookup, active flag, integer validation and API error display. Angular build passed. Product views: ff35faf.
+
+- Roadmap 25: real category/supplier management screens with pagination, admin create/edit/deactivate forms and contact details. Both builds and full lint passed; phase 3 catalog gate complete.

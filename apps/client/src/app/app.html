@@ -8,6 +8,13 @@
     <p class="tagline">Inventory &amp; orders</p>
     <nav aria-label="Main navigation">
       @if (session.user()) {
+        <a routerLink="/categories" routerLinkActive="active" ariaCurrentWhenActive="page"
+          >Categories</a
+        ><a routerLink="/suppliers" routerLinkActive="active" ariaCurrentWhenActive="page"
+          >Suppliers</a
+        >
+      }
+      @if (session.user()) {
         <a routerLink="/products" routerLinkActive="active" ariaCurrentWhenActive="page"
           >Products</a
         >
