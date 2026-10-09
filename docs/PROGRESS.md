@@ -39,3 +39,5 @@ Latest feature: stock indicators 02a8d10; inventory tests follow in this commit.
 - Roadmap 39: real multi-line draft create/edit form, searchable product lookup, duplicate checks and server-authoritative save. Angular production build passed.
 
 - Roadmap 40: complete transactional confirmation including mandatory conditional deduction and same-transaction ledger, trusted price recapture and Angular action. Both builds and 3 order API tests passed. Safety kept indivisible; follow-up 41/42 harden contention and ledger uniqueness.
+
+- Roadmap 41: conditional order version lock and canonical product lock order reduce contention while retaining conditional stock deductions. Real competing confirmations: exactly one succeeds, stock 1, one movement, loser draft. Build and 4 order tests passed.

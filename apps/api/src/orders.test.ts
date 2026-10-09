@@ -9,6 +9,7 @@ import { Order } from './models/order.js';
 import { StockMovement } from './models/movement.js';
 import { tokenHash } from './auth.js';
 import { openTestDatabase, closeTestDatabase } from './test-database.js';
+import { createDraft, confirmOrder } from './services/orders.js';
 const token = 'f'.repeat(64);
 const app = createApp();
 let productId: string;
@@ -113,4 +114,26 @@ it('confirms exactly once and captures current trusted prices in the stock trans
     ).status,
   ).toBe(409);
   expect((await Product.findById(productId))!.quantity).toBe(3);
+});
+it('allows only one competing confirmation for the last five units', async () => {
+  const product = await Product.create({
+    skuNormalized: 'RACE-1',
+    name: 'Race item',
+    categoryId: new mongoose.Types.ObjectId(),
+    supplierId: new mongoose.Types.ObjectId(),
+    unitPriceCents: 100,
+    quantity: 5,
+  });
+  const a = await createDraft({ items: [{ productId: product.id, quantity: 4 }] }, actorId);
+  const b = await createDraft({ items: [{ productId: product.id, quantity: 4 }] }, actorId);
+  const results = await Promise.allSettled([
+    confirmOrder(a.id, actorId),
+    confirmOrder(b.id, actorId),
+  ]);
+  expect(results.filter((result) => result.status === 'fulfilled')).toHaveLength(1);
+  expect((await Product.findById(product.id))!.quantity).toBe(1);
+  expect(
+    await StockMovement.countDocuments({ productId: product._id, type: 'order-confirmed' }),
+  ).toBe(1);
+  expect(await Order.countDocuments({ _id: { $in: [a._id, b._id] }, status: 'draft' })).toBe(1);
 });

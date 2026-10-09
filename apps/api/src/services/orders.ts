@@ -72,11 +72,19 @@ export async function editDraft(id: string, input: z.infer<typeof draftInput>, a
 }
 export async function confirmOrder(id: string, actorId: string) {
   return transaction(async (session) => {
-    const order = await Order.findById(id).session(session);
-    if (!order) throw new ApiError(404, 'ORDER_NOT_FOUND', 'Order not found');
-    assertTransition(order.status, 'confirmed');
+    const snapshot = await Order.findById(id).session(session);
+    if (!snapshot) throw new ApiError(404, 'ORDER_NOT_FOUND', 'Order not found');
+    assertTransition(snapshot.status, 'confirmed');
+    const order = await Order.findOneAndUpdate(
+      { _id: id, status: 'draft', __v: snapshot.__v },
+      { $inc: { __v: 1 } },
+      { session, new: true },
+    );
+    if (!order) throw new ApiError(409, 'ORDER_CHANGED', 'Order changed; retry after reloading');
     const items = [];
-    for (const line of order.items) {
+    for (const line of [...order.items].sort((a, b) =>
+      a.productId.toString().localeCompare(b.productId.toString()),
+    )) {
       const before = await Product.findOneAndUpdate(
         { _id: line.productId, active: true, quantity: { $gte: line.quantity } },
         { $inc: { quantity: -line.quantity } },
