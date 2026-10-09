@@ -3,6 +3,18 @@ import { authenticated } from './auth-guard';
 
 export const routes: Routes = [
   {
+    path: 'orders/new',
+    canActivate: [authenticated],
+    loadComponent: () => import('./order-editor').then((m) => m.OrderEditor),
+    title: 'Create order | StockFlow',
+  },
+  {
+    path: 'orders/:id/edit',
+    canActivate: [authenticated],
+    loadComponent: () => import('./order-editor').then((m) => m.OrderEditor),
+    title: 'Edit draft | StockFlow',
+  },
+  {
     path: 'orders',
     canActivate: [authenticated],
     loadComponent: () => import('./order-list').then((m) => m.OrderList),

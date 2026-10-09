@@ -35,3 +35,5 @@ Latest feature: stock indicators 02a8d10; inventory tests follow in this commit.
 - Roadmap 37: optimistic draft-only edits, trusted recalculated totals and edit history. Build and 2 real DB order tests passed.
 
 - Roadmap 38: paginated order status/search/date API plus Angular list/detail/history with actor names and price snapshots. Both production builds passed.
+
+- Roadmap 39: real multi-line draft create/edit form, searchable product lookup, duplicate checks and server-authoritative save. Angular production build passed.

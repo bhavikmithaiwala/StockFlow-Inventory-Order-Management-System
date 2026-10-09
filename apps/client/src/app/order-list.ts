@@ -9,6 +9,7 @@ import { OrderRecord } from './order-types';
   imports: [FormsModule, CurrencyPipe, DatePipe, RouterLink],
   template: `
     <h2>Orders</h2>
+    <a routerLink="/orders/new">Create draft order</a>
     <form class="panel form-grid" (ngSubmit)="load(1)">
       <div>
         <label for="order-search">Order number</label

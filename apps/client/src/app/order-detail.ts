@@ -13,6 +13,9 @@ import { OrderRecord } from './order-types';
     }
     @if (order(); as item) {
       <h2>{{ item.orderNumber }}</h2>
+      @if (item.status === 'draft') {
+        <a [routerLink]="['/orders', item._id, 'edit']">Edit draft</a>
+      }
       <p>
         Status: <strong>{{ item.status }}</strong>
       </p>
@@ -77,11 +80,9 @@ export class OrderDetail {
     return typeof actor === 'string' ? 'Warehouse user' : (actor?.name ?? 'Unknown actor');
   }
   load() {
-    this.api
-      .get<Result<OrderRecord>>(`orders/${this.id}`)
-      .subscribe({
-        next: (result) => this.order.set(result.data),
-        error: () => this.error.set('Order unavailable or not found.'),
-      });
+    this.api.get<Result<OrderRecord>>(`orders/${this.id}`).subscribe({
+      next: (result) => this.order.set(result.data),
+      error: () => this.error.set('Order unavailable or not found.'),
+    });
   }
 }
