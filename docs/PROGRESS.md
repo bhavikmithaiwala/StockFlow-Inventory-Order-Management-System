@@ -61,3 +61,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Roadmap 22: bounded product pagination, literal search, category/supplier/activity filters and allowlisted stable sorting. Build and 2 product API tests passed, including query-operator rejection. Product lifecycle: 72b6b81.
 
 - Roadmap 23: Angular products search/filter/sort/pagination, real detail view, integer-cent formatting, loading/error/empty states. Production build passed.
+
+- Roadmap 24: create/edit reactive product forms, paginated category/supplier lookup, active flag, integer validation and API error display. Angular build passed. Product views: ff35faf.

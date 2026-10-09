@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 
 export interface Page<T> {
   data: T[];
@@ -10,6 +11,14 @@ export interface Result<T> {
 }
 @Injectable({ providedIn: 'root' })
 export class Api {
+  async all<T>(path: string): Promise<T[]> {
+    const records: T[] = [];
+    for (let page = 1; ; page++) {
+      const result = await firstValueFrom(this.get<Page<T>>(path, { page, limit: 100 }));
+      records.push(...result.data);
+      if (page * 100 >= result.meta.total) return records;
+    }
+  }
   private readonly http = inject(HttpClient);
   get<T>(path: string, query: Record<string, string | number | boolean> = {}) {
     return this.http.get<T>(`/api/${path}`, { params: new HttpParams({ fromObject: query }) });

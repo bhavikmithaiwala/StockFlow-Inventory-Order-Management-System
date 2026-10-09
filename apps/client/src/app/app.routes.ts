@@ -3,6 +3,18 @@ import { authenticated } from './auth-guard';
 
 export const routes: Routes = [
   {
+    path: 'products/new',
+    canActivate: [authenticated],
+    loadComponent: () => import('./product-editor').then((m) => m.ProductEditor),
+    title: 'Create product | StockFlow',
+  },
+  {
+    path: 'products/:id/edit',
+    canActivate: [authenticated],
+    loadComponent: () => import('./product-editor').then((m) => m.ProductEditor),
+    title: 'Edit product | StockFlow',
+  },
+  {
     path: 'products',
     canActivate: [authenticated],
     loadComponent: () => import('./product-list').then((m) => m.ProductList),
