@@ -101,3 +101,16 @@ export async function adjustStock(input: z.infer<typeof adjustmentInput>, actorI
     };
   });
 }
+
+export async function lowStock({ page, limit }: { page: number; limit: number }) {
+  const filter = { active: true, $expr: { $lte: ['$quantity', '$reorderLevel'] } };
+  const [data, total] = await Promise.all([
+    Product.find(filter)
+      .sort({ quantity: 1, _id: 1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean(),
+    Product.countDocuments(filter),
+  ]);
+  return { data, meta: { page, limit, total } };
+}

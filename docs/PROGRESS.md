@@ -32,3 +32,5 @@
 
 `git log --reverse --oneline 09b8d2c..HEAD` lists actual incremental hashes.
 Latest hardening: 1362fde; demo seed follows in this commit.
+
+- Additional architecture refactor: route adapters only validate/authorize/serialize; authentication/catalog/dashboard/report/read operations now reside in services with shared query schemas. Full API build, workspace lint and all backend regression tests passed.

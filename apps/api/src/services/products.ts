@@ -46,3 +46,38 @@ export async function editProduct(
     return product.save({ session });
   });
 }
+
+import type { FilterQuery, InferSchemaType } from 'mongoose';
+import { productQuery } from '../queries.js';
+export async function listProducts(query: z.infer<typeof productQuery>) {
+  const filter: FilterQuery<InferSchemaType<typeof Product.schema>> = {};
+  if (query.categoryId) filter.categoryId = query.categoryId;
+  if (query.supplierId) filter.supplierId = query.supplierId;
+  if (query.active) filter.active = query.active === 'true';
+  if (query.search) {
+    const escaped = query.search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    filter.$or = [
+      { name: { $regex: escaped, $options: 'i' } },
+      { skuNormalized: { $regex: escaped, $options: 'i' } },
+    ];
+  }
+  const [data, total] = await Promise.all([
+    Product.find(filter)
+      .sort({ [query.sort]: query.direction === 'asc' ? 1 : -1, _id: 1 })
+      .skip((query.page - 1) * query.limit)
+      .limit(query.limit)
+      .lean(),
+    Product.countDocuments(filter),
+  ]);
+  return { data, meta: { page: query.page, limit: query.limit, total } };
+}
+export async function getProduct(id: string) {
+  const product = await Product.findById(id).lean();
+  if (!product) throw new ApiError(404, 'PRODUCT_NOT_FOUND', 'Product not found');
+  return product;
+}
+export async function deactivateProduct(id: string) {
+  const product = await Product.findByIdAndUpdate(id, { active: false }, { new: true });
+  if (!product) throw new ApiError(404, 'PRODUCT_NOT_FOUND', 'Product not found');
+  return product;
+}

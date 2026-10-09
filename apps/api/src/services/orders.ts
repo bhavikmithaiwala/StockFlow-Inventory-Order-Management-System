@@ -196,3 +196,9 @@ export async function cancelOrder(id: string, reason: string, actorId: string) {
     return order.save({ session });
   });
 }
+
+export async function getOrder(id: string) {
+  const order = await Order.findById(id).populate('history.actorId', 'name').lean();
+  if (!order) throw new ApiError(404, 'ORDER_NOT_FOUND', 'Order not found');
+  return order;
+}
