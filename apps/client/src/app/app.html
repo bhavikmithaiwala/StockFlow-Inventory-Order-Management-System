@@ -6,7 +6,15 @@
       <h1>StockFlow</h1>
     </div>
     <p class="tagline">Inventory &amp; orders</p>
-    <nav aria-label="Main navigation"><a href="/">System overview</a></nav>
+    <nav aria-label="Main navigation">
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        ariaCurrentWhenActive="page"
+        >System overview</a
+      >
+    </nav>
   </aside>
   <div class="workspace">
     <header><span>Single warehouse</span><span>StockFlow workspace</span></header>
