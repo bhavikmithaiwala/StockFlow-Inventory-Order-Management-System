@@ -36,3 +36,4 @@
 Latest hardening: 1362fde; demo seed follows in this commit.
 
 - Additional architecture refactor: route adapters only validate/authorize/serialize; authentication/catalog/dashboard/report/read operations now reside in services with shared query schemas. Full API build, workspace lint and all backend regression tests passed.
+- Dependency hardening: upgraded/overrode Vitest to 4.1.11; all 54 backend tests, both builds and 10 Angular tests passed. Runtime audit: zero vulnerabilities. Six remaining high development findings through Karma/braces documented in DEPENDENCIES.md; no patched braces release is available.
