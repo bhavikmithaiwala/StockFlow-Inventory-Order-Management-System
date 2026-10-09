@@ -4,6 +4,11 @@ import { Product } from '../models/product.js';
 import { StockMovement } from '../models/movement.js';
 import { openTestDatabase, closeTestDatabase } from '../test-database.js';
 import { receiveStock, adjustStock } from './inventory.js';
+import request from 'supertest';
+import { createApp } from '../app.js';
+import { User } from '../models/user.js';
+import { Session } from '../models/session.js';
+import { tokenHash } from '../auth.js';
 let productId: string;
 const actorId = new mongoose.Types.ObjectId().toString();
 beforeAll(async () => {
@@ -41,4 +46,47 @@ it('adjusts signed stock with a reason and rolls back excessive reductions', asy
   const movement = await StockMovement.findOne({ type: 'adjustment' });
   expect(movement?.beforeQuantity).toBe(5);
   expect(movement?.afterQuantity).toBe(3);
+});
+it('allows staff receipts but denies adjustment and actor spoofing at the API', async () => {
+  const user = await User.create({
+    _id: actorId,
+    name: 'Staff',
+    emailNormalized: 'inventory@example.test',
+    passwordHash: 'not-used-in-session-test',
+    role: 'staff',
+  });
+  const token = 'e'.repeat(64);
+  await Session.create({
+    userId: user._id,
+    tokenHash: tokenHash(token),
+    expiresAt: new Date(Date.now() + 60000),
+  });
+  const app = createApp();
+  expect(
+    (
+      await request(app)
+        .post('/api/inventory/receive')
+        .set('Cookie', `sf_session=${token}`)
+        .set('Origin', 'http://localhost:4200')
+        .send({ productId, quantity: 2, reason: 'Second delivery' })
+    ).status,
+  ).toBe(201);
+  expect(
+    (
+      await request(app)
+        .post('/api/inventory/adjust')
+        .set('Cookie', `sf_session=${token}`)
+        .set('Origin', 'http://localhost:4200')
+        .send({ productId, delta: -1, reason: 'Attempt' })
+    ).status,
+  ).toBe(403);
+  expect(
+    (
+      await request(app)
+        .post('/api/inventory/receive')
+        .set('Cookie', `sf_session=${token}`)
+        .set('Origin', 'http://localhost:4200')
+        .send({ productId, quantity: 1, reason: 'Attempt', actorId })
+    ).status,
+  ).toBe(400);
 });

@@ -6,6 +6,7 @@ import { usersRouter } from './users.js';
 import { categoriesRouter } from './categories.js';
 import { suppliersRouter } from './suppliers.js';
 import { productsRouter } from './products.js';
+import { inventoryRouter } from './inventory.js';
 
 export function createApp() {
   const app = express();
@@ -23,6 +24,7 @@ export function createApp() {
   app.use('/api/categories', categoriesRouter);
   app.use('/api/suppliers', suppliersRouter);
   app.use('/api/products', productsRouter);
+  app.use('/api/inventory', inventoryRouter);
   app.use((_req, res) =>
     res.status(404).json({
       error: {
