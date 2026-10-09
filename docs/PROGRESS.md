@@ -47,3 +47,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Roadmap 15: typed API client and signal-backed current-user state; login updates the shell identity. No localStorage auth. Angular build passed. Login form: fbe18eb.
 
 - Roadmap 16: server-verified route guard, logout and session-expiry interceptor. Angular build, 4 browser tests and full backend tests passed. Typed client: 886e2df. Phase 2 authentication/RBAC gate passed.
+
+- Roadmap 17: normalized unique category schema and strict input validation. Build and schema test passed. Phase 2 commit: 9b6c56b; backend milestone 12 tests passed.
