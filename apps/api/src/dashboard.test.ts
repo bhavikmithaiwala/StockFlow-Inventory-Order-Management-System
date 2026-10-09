@@ -94,3 +94,18 @@ it('filters order status and movement type/date reports', async () => {
     ).status,
   ).toBe(400);
 });
+it('exports filtered real inventory and movements as downloadable CSV', async () => {
+  const app = createApp();
+  const inventory = await request(app)
+    .get('/api/reports/inventory?format=csv&lowStock=true')
+    .set('Cookie', `sf_session=${token}`);
+  expect(inventory.status).toBe(200);
+  expect(inventory.headers['content-type']).toContain('text/csv');
+  expect(inventory.headers['content-disposition']).toContain('inventory.csv');
+  expect(inventory.text).toContain('REPORT-1');
+  expect(inventory.text).toContain('1050');
+  const movements = await request(app)
+    .get('/api/reports/stock-movements?format=csv&type=receipt')
+    .set('Cookie', `sf_session=${token}`);
+  expect(movements.text).toContain('Report fixture receipt');
+});
