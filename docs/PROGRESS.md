@@ -49,3 +49,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Roadmap 16: server-verified route guard, logout and session-expiry interceptor. Angular build, 4 browser tests and full backend tests passed. Typed client: 886e2df. Phase 2 authentication/RBAC gate passed.
 
 - Roadmap 17: normalized unique category schema and strict input validation. Build and schema test passed. Phase 2 commit: 9b6c56b; backend milestone 12 tests passed.
+
+- Roadmap 18: category list/create/update APIs, admin writes, database uniqueness and reference safeguard. Build and real DB category API test passed.
