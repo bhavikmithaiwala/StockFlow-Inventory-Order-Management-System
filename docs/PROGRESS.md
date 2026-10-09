@@ -31,3 +31,5 @@ Latest feature: stock indicators 02a8d10; inventory tests follow in this commit.
 - Roadmap 35: indexed order/line/history model, legal state transitions and safe integer totals. Build and domain test passed. Inventory test milestone: 65d6b30.
 
 - Roadmap 36: validated draft creation/detail API with trusted price snapshots, server totals and unchanged stock. Build and real DB draft API test passed.
+
+- Roadmap 37: optimistic draft-only edits, trusted recalculated totals and edit history. Build and 2 real DB order tests passed.

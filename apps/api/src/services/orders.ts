@@ -49,3 +49,22 @@ export async function createDraft(input: z.infer<typeof draftInput>, actorId: st
     history: [{ action: 'created', actorId }],
   });
 }
+export async function editDraft(id: string, input: z.infer<typeof draftInput>, actorId: string) {
+  draftInput.parse(input);
+  const order = await Order.findById(id);
+  if (!order) throw new ApiError(404, 'ORDER_NOT_FOUND', 'Order not found');
+  if (order.status !== 'draft')
+    throw new ApiError(409, 'INVALID_ORDER_STATUS', 'Only draft orders can be edited');
+  const items = await draftLines(input);
+  const updated = await Order.findOneAndUpdate(
+    { _id: id, status: 'draft', __v: order.__v },
+    {
+      $set: { items, totalCents: calculateTotal(items) },
+      $inc: { __v: 1 },
+      $push: { history: { action: 'edited', actorId, at: new Date() } },
+    },
+    { new: true, runValidators: true },
+  );
+  if (!updated) throw new ApiError(409, 'ORDER_CHANGED', 'Order changed; reload before editing');
+  return updated;
+}

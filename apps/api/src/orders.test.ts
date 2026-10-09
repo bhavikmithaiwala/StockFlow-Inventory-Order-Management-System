@@ -66,3 +66,28 @@ it('creates a trusted draft total without reserving or deducting stock', async (
   ).toBe('draft');
   expect(await Order.countDocuments()).toBe(1);
 });
+it('edits draft items, refreshes trusted totals, rejects duplicate lines and keeps stock unchanged', async () => {
+  const edited = await request(app)
+    .patch(`/api/orders/${orderId}`)
+    .set('Cookie', `sf_session=${token}`)
+    .set('Origin', 'http://localhost:4200')
+    .send({ items: [{ productId, quantity: 2 }] });
+  expect(edited.status).toBe(200);
+  expect(edited.body.data.totalCents).toBe(700);
+  expect(edited.body.data.history.at(-1).action).toBe('edited');
+  expect((await Product.findById(productId))!.quantity).toBe(5);
+  expect(
+    (
+      await request(app)
+        .patch(`/api/orders/${orderId}`)
+        .set('Cookie', `sf_session=${token}`)
+        .set('Origin', 'http://localhost:4200')
+        .send({
+          items: [
+            { productId, quantity: 1 },
+            { productId, quantity: 1 },
+          ],
+        })
+    ).status,
+  ).toBe(400);
+});
