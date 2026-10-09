@@ -88,3 +88,28 @@ it('searches, sorts and bounds pagination without accepting MongoDB query operat
       .status,
   ).toBe(400);
 });
+it('rejects duplicate SKUs, stock spoofing, bad money, malformed IDs and missing references', async () => {
+  const post = (body: unknown) =>
+    request(app)
+      .post('/api/products')
+      .set('Cookie', `sf_session=${token}`)
+      .set('Origin', 'http://localhost:4200')
+      .send(body);
+  expect((await post({ ...input, sku: 'SKU-1001' })).status).toBe(409);
+  for (const body of [
+    { ...input, quantity: 100 },
+    { ...input, unitPriceCents: -1 },
+    { ...input, unitPriceCents: 1.1 },
+    { ...input, name: ' ' },
+    { ...input, categoryId: 'invalid' },
+  ])
+    expect((await post(body)).status).toBe(400);
+  expect(
+    (await post({ ...input, sku: 'MISSING-REFERENCE', categoryId: '0'.repeat(24) })).body.error
+      .code,
+  ).toBe('INACTIVE_REFERENCE');
+  expect(
+    (await request(app).get('/api/products/not-an-id').set('Cookie', `sf_session=${token}`)).status,
+  ).toBe(400);
+  expect(await Product.countDocuments()).toBe(1);
+});
