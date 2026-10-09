@@ -73,3 +73,18 @@ it('creates, edits and deactivates products without deleting history', async () 
     (await request(app).get(`/api/products/${id}`).set('Cookie', `sf_session=${token}`)).status,
   ).toBe(200);
 });
+it('searches, sorts and bounds pagination without accepting MongoDB query operators', async () => {
+  const result = await request(app)
+    .get('/api/products?search=Notebook&active=false&limit=1&sort=unitPriceCents&direction=desc')
+    .set('Cookie', `sf_session=${token}`);
+  expect(result.status).toBe(200);
+  expect(result.body.meta.total).toBe(1);
+  expect(result.body.data[0].skuNormalized).toBe('SKU-1001');
+  expect(
+    (await request(app).get('/api/products?limit=101').set('Cookie', `sf_session=${token}`)).status,
+  ).toBe(400);
+  expect(
+    (await request(app).get('/api/products?active[$ne]=true').set('Cookie', `sf_session=${token}`))
+      .status,
+  ).toBe(400);
+});
