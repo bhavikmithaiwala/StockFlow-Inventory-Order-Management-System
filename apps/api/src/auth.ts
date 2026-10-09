@@ -6,6 +6,7 @@ import { Session } from './models/session.js';
 import { hashPassword, verifyPassword } from './security/password.js';
 import { ApiError } from './errors.js';
 import { config } from './config.js';
+import { rateLimit } from 'express-rate-limit';
 
 export const tokenHash = (token: string) => createHash('sha256').update(token).digest('hex');
 const cookieOptions = {
@@ -40,6 +41,7 @@ export const requireAuth: RequestHandler = async (req, res, next) => {
   if (!user) throw new ApiError(401, 'SESSION_EXPIRED', 'Session expired; sign in again');
   res.locals['user'] = publicUser(user);
   res.locals['sessionId'] = session!._id;
+  await Session.updateOne({ _id: session!._id }, { $set: { lastUsedAt: new Date() } });
   next();
 };
 export const checkOrigin: RequestHandler = (req, _res, next) => {
@@ -53,7 +55,23 @@ export const checkOrigin: RequestHandler = (req, _res, next) => {
 };
 
 export const authRouter = Router();
-authRouter.post('/login', async (req, res) => {
+const loginLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  handler: (_req, res) =>
+    res
+      .status(429)
+      .json({
+        error: {
+          code: 'LOGIN_RATE_LIMIT',
+          message: 'Too many login attempts; try again later',
+          requestId: res.locals['requestId'],
+        },
+      }),
+});
+authRouter.post('/login', loginLimit, async (req, res) => {
   const input = z
     .object({ email: z.email(), password: z.string().min(1).max(128) })
     .strict()

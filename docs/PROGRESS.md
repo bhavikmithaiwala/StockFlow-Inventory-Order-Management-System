@@ -37,3 +37,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Roadmap 10: salted scrypt password hashing and development-only admin provisioning from environment, refusing account overwrite. API build and password test passed. Models commit: 0be7844.
 
 - Roadmap 11: login/logout/me API, hashed opaque cookies, origin defense and central safe errors. API compilation and 2 real-MongoDB auth tests passed (login/me/logout, wrong credentials, foreign origin). Password provisioning commit: a1c2566.
+
+- Roadmap 12: login rate limit, session last-used tracking, stronger scrypt work factor, expiry/deactivated/forged-cookie tests. API build and 5 targeted tests passed. Auth endpoints commit: 4addad5.

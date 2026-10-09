@@ -5,6 +5,7 @@ import { User } from './models/user.js';
 import { Session } from './models/session.js';
 import { hashPassword } from './security/password.js';
 import { openTestDatabase, closeTestDatabase } from './test-database.js';
+import { tokenHash } from './auth.js';
 
 describe('session API with real MongoDB', () => {
   beforeAll(async () => {
@@ -49,5 +50,38 @@ describe('session API with real MongoDB', () => {
       (await request(app).post('/api/auth/login').set('Origin', 'https://evil.example').send({}))
         .status,
     ).toBe(403);
+  });
+  it('rejects expired tokens even before TTL removal and deactivated users', async () => {
+    const user = await User.findOne({ emailNormalized: 'admin@example.test' });
+    const token = 'a'.repeat(64);
+    await Session.create({
+      userId: user!._id,
+      tokenHash: tokenHash(token),
+      expiresAt: new Date(Date.now() - 1000),
+    });
+    expect(
+      (await request(app).get('/api/auth/me').set('Cookie', `sf_session=${token}`)).status,
+    ).toBe(401);
+    await Session.updateOne(
+      { tokenHash: tokenHash(token) },
+      { expiresAt: new Date(Date.now() + 60000) },
+    );
+    await User.updateOne({ _id: user!._id }, { active: false });
+    expect(
+      (await request(app).get('/api/auth/me').set('Cookie', `sf_session=${token}`)).status,
+    ).toBe(401);
+    await User.updateOne({ _id: user!._id }, { active: true });
+  });
+  it('rejects forged and malformed cookies', async () => {
+    expect(
+      (
+        await request(app)
+          .get('/api/auth/me')
+          .set('Cookie', `sf_session=${'b'.repeat(64)}`)
+      ).status,
+    ).toBe(401);
+    expect(
+      (await request(app).get('/api/auth/me').set('Cookie', 'sf_session=malformed')).status,
+    ).toBe(401);
   });
 });
