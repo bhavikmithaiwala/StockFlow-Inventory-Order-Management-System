@@ -123,3 +123,36 @@ it('includes stock at reorder threshold and excludes inactive products from aler
   ).toBe(0);
   await Product.updateOne({ _id: productId }, { active: true });
 });
+it('rolls back the quantity if ledger insertion fails', async () => {
+  const before = (await Product.findById(productId))!.quantity;
+  const count = await StockMovement.countDocuments();
+  await expect(
+    receiveStock({ productId, quantity: 1, reason: 'Invalid audit actor' }, 'malformed'),
+  ).rejects.toThrow();
+  expect((await Product.findById(productId))!.quantity).toBe(before);
+  expect(await StockMovement.countDocuments()).toBe(count);
+});
+it('serializes concurrent receipts and keeps every movement reconciled', async () => {
+  const before = (await Product.findById(productId))!.quantity;
+  await Promise.all([
+    receiveStock({ productId, quantity: 2, reason: 'Concurrent A' }, actorId),
+    receiveStock({ productId, quantity: 3, reason: 'Concurrent B' }, actorId),
+  ]);
+  expect((await Product.findById(productId))!.quantity).toBe(before + 5);
+  for (const movement of await StockMovement.find({ productId }))
+    expect(movement.afterQuantity - movement.beforeQuantity).toBe(movement.delta);
+});
+it('rejects invalid deltas/reasons before mutating stock', async () => {
+  const before = (await Product.findById(productId))!.quantity;
+  await expect(
+    adjustStock({ productId, delta: 0, reason: 'No change' }, actorId),
+  ).rejects.toThrow();
+  await expect(
+    adjustStock({ productId, delta: 1.5, reason: 'Fraction' }, actorId),
+  ).rejects.toThrow();
+  await expect(
+    receiveStock({ productId, quantity: -1, reason: 'Negative' }, actorId),
+  ).rejects.toThrow();
+  await expect(receiveStock({ productId, quantity: 1, reason: ' ' }, actorId)).rejects.toThrow();
+  expect((await Product.findById(productId))!.quantity).toBe(before);
+});
