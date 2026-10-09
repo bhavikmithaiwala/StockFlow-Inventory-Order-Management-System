@@ -57,3 +57,5 @@ Latest feature: stock indicators 02a8d10; inventory tests follow in this commit.
 - Roadmap 48: actual Angular dashboard summaries, reorder alerts, recent orders/activity, refresh and failure/empty states. Production build passed.
 
 - Roadmap 49: actual category aggregation and accessible meter charts for order statuses/category units with text values. Both builds and dashboard DB test passed.
+
+- Roadmap 50: inventory valuation/low-stock report with category/supplier/activity filters, full-filter totals and paginated rows. Build and 2 report/dashboard DB tests passed.

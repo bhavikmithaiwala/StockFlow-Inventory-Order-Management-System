@@ -51,3 +51,18 @@ it('aggregates actual inventory, order and movement records', async () => {
   expect(res.body.data.recentOrders).toHaveLength(1);
   expect(res.body.data.categoryBreakdown).toMatchObject([{ products: 1, units: 3 }]);
 });
+it('reports inventory valuation and low-stock filters with whole cents', async () => {
+  const res = await request(createApp())
+    .get('/api/reports/inventory?lowStock=true')
+    .set('Cookie', `sf_session=${token}`);
+  expect(res.status).toBe(200);
+  expect(res.body.summary).toEqual({ quantity: 3, valueCents: 1050 });
+  expect(res.body.data[0].valueCents).toBe(1050);
+  expect(
+    (
+      await request(createApp())
+        .get('/api/reports/inventory?active=false')
+        .set('Cookie', `sf_session=${token}`)
+    ).body.meta.total,
+  ).toBe(0);
+});
