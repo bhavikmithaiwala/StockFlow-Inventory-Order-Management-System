@@ -6,8 +6,8 @@
     "apps/*"
   ],
   "engines": {
-    "node": "\u003e=22.13.0",
-    "npm": "\u003e=10"
+    "node": ">=22.13.0",
+    "npm": ">=10"
   },
   "scripts": {
     "dev:client": "npm run dev --workspace @stockflow/client",
@@ -24,6 +24,7 @@
     "seed": "npm run seed --workspace @stockflow/api"
   },
   "devDependencies": {
+    "@apidevtools/swagger-parser": "^13.0.0",
     "@eslint/js": "^9.39.5",
     "@playwright/test": "^1.64.0",
     "angular-eslint": "^20.7.0",

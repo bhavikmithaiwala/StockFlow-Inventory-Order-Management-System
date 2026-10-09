@@ -7,11 +7,12 @@
 - [x] Roadmap 35–46: complete order lifecycle, bounded retries, exact-once deductions/restoration and real API races/rollback.
 - [x] Roadmap 47–53: actual dashboard/charts/reports and formula-safe CSV exports.
 - [x] Roadmap 54–60: Users/Settings, persisted preferences, hardening, expanded tests, authentic browser evidence and non-destructive demo seed.
-- [ ] Roadmap 61–65: API/architecture docs, CI, README and full release verification (next).
+- [x] Roadmap 61: validated OpenAPI contract covering 35 operations, served publicly, with cookie-session workflow examples. API build and 5 foundation tests passed.
+- [ ] Roadmap 62–65: architecture docs, CI, README and full release verification (next).
 
 ## Checks actually run
 
-- Latest full backend suite: 52 tests passed in 16 files. Additional real-DB seed test passed.
+- Latest full backend suite after service refactor: 53 tests passed in 17 files. One additional API contract test now passes.
 - Both production builds passed. Latest full lint/typecheck passed at order/report milestones; repeat at release.
 - Angular: 10 ChromeHeadless tests passed.
 - Playwright: 2 real browser workflows passed, with catalog/stock/order/report CSV and staff API/navigation restrictions.

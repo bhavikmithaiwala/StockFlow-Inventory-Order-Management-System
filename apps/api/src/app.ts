@@ -13,6 +13,7 @@ import { reportsRouter } from './reports.js';
 import helmet from 'helmet';
 import { config } from './config.js';
 import { z } from 'zod';
+import { fileURLToPath } from 'node:url';
 
 export function createApp() {
   const app = express();
@@ -39,6 +40,9 @@ export function createApp() {
   });
   app.use(express.json({ limit: '64kb' }));
   app.get('/api/health', (_req, res) => res.json({ data: { status: 'ok' } }));
+  app.get('/api/openapi.json', (_req, res) =>
+    res.sendFile(fileURLToPath(new URL('../../../docs/openapi.json', import.meta.url))),
+  );
   app.use(checkOrigin);
   app.use((req, _res, next) => {
     if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method)) z.object({}).strict().parse(req.query);

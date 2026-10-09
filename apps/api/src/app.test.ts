@@ -3,6 +3,13 @@ import request from 'supertest';
 import { createApp } from './app.js';
 
 describe('API foundation', () => {
+  it('serves the real public API contract', async () => {
+    const res = await request(createApp()).get('/api/openapi.json');
+    expect(res.status).toBe(200);
+    expect(res.body.openapi).toBe('3.0.3');
+    expect(res.body.paths['/orders/{id}/confirm'].post).toBeDefined();
+    expect(res.body.components.securitySchemes.sessionCookie.name).toBe('sf_session');
+  });
   it('returns a live health response and request identifier', async () => {
     const res = await request(createApp()).get('/api/health');
     expect(res.status).toBe(200);
