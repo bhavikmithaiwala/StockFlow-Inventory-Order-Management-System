@@ -41,3 +41,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Roadmap 12: login rate limit, session last-used tracking, stronger scrypt work factor, expiry/deactivated/forged-cookie tests. API build and 5 targeted tests passed. Auth endpoints commit: 4addad5.
 
 - Roadmap 13: backend role middleware and paginated admin user management, staff provisioning and lockout protection. API build and 2 real-database RBAC tests passed. Session security: f83ff7f.
+
+- Roadmap 14: working reactive Angular login form with email/password validation, busy state and API error presentation. Production build passed. Backend RBAC: a03c9a5.
