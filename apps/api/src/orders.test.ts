@@ -208,3 +208,35 @@ it('cancels confirmed orders and restores stock exactly once', async () => {
   );
   expect((await Product.findById(productId))!.quantity).toBe(3);
 });
+it('normalizes valid product IDs and cancels a draft without restoring unreserved stock', async () => {
+  const before = (await Product.findById(productId))!.quantity;
+  const movements = await StockMovement.countDocuments();
+  const draft = await createDraft(
+    { items: [{ productId: productId.toUpperCase(), quantity: 1 }] },
+    actorId,
+  );
+  await expect(cancelOrder(draft.id, ' ', actorId)).rejects.toThrow();
+  expect((await Order.findById(draft.id))!.status).toBe('draft');
+  await cancelOrder(draft.id, 'Draft no longer needed', actorId);
+  expect((await Product.findById(productId))!.quantity).toBe(before);
+  expect(await StockMovement.countDocuments()).toBe(movements);
+});
+it('serializes a concurrent double-click on the same order', async () => {
+  const draft = await createDraft({ items: [{ productId, quantity: 1 }] }, actorId);
+  const before = (await Product.findById(productId))!.quantity;
+  const results = await Promise.all([
+    request(app)
+      .post(`/api/orders/${draft.id}/confirm`)
+      .set('Cookie', `sf_session=${token}`)
+      .set('Origin', 'http://localhost:4200')
+      .send({}),
+    request(app)
+      .post(`/api/orders/${draft.id}/confirm`)
+      .set('Cookie', `sf_session=${token}`)
+      .set('Origin', 'http://localhost:4200')
+      .send({}),
+  ]);
+  expect(results.map((result) => result.status).sort()).toEqual([200, 409]);
+  expect((await Product.findById(productId))!.quantity).toBe(before - 1);
+  expect(await StockMovement.countDocuments({ orderId: draft._id })).toBe(1);
+});

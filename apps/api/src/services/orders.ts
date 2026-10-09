@@ -40,7 +40,7 @@ export async function draftLines(input: z.infer<typeof draftInput>) {
   });
 }
 export async function createDraft(input: z.infer<typeof draftInput>, actorId: string) {
-  draftInput.parse(input);
+  input = draftInput.parse(input);
   const items = await draftLines(input);
   return Order.create({
     orderNumber: `SF-${randomUUID().toUpperCase()}`,
@@ -52,7 +52,7 @@ export async function createDraft(input: z.infer<typeof draftInput>, actorId: st
   });
 }
 export async function editDraft(id: string, input: z.infer<typeof draftInput>, actorId: string) {
-  draftInput.parse(input);
+  input = draftInput.parse(input);
   const order = await Order.findById(id);
   if (!order) throw new ApiError(404, 'ORDER_NOT_FOUND', 'Order not found');
   if (order.status !== 'draft')
