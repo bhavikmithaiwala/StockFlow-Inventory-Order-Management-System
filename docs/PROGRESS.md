@@ -67,3 +67,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Roadmap 25: real category/supplier management screens with pagination, admin create/edit/deactivate forms and contact details. Both builds and full lint passed; phase 3 catalog gate complete.
 
 - Roadmap 26: append-only audited stock ledger with reconciliation validation and mutation guards. Build and ledger test passed. Catalog UI milestone: f726a24.
+
+- Roadmap 27: receipt quantity/ledger transaction with conditional capacity check and bounded whole-transaction retries. Build and real DB receipt test passed.
