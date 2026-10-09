@@ -16,7 +16,10 @@ describe('API foundation', () => {
     expect(res.body.error.code).toBe('NOT_FOUND');
   });
   it('rejects malformed JSON without leaking a stack trace', async () => {
-    const res = await request(createApp()).post('/api/absent').set('Content-Type', 'application/json').send('{');
+    const res = await request(createApp())
+      .post('/api/absent')
+      .set('Content-Type', 'application/json')
+      .send('{');
     expect(res.status).toBe(400);
     expect(res.body.error.code).toBe('INVALID_JSON');
     expect(res.body.error.stack).toBeUndefined();

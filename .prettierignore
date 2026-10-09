@@ -1,0 +1,10 @@
+node_modules
+dist
+.angular
+coverage
+package-lock.json
+AGENTS.md
+CODEX_START_PROMPT.md
+docs/PROJECT_REFERENCE.md
+docs/COMMIT_ROADMAP.md
+.vscode
