@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     env:
       CI: 'true'
@@ -22,10 +22,10 @@ jobs:
       MONGODB_URI: mongodb://127.0.0.1:27018/stockflow?replicaSet=rs0&directConnection=true
       APP_ORIGIN: http://localhost:4200
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: npm
@@ -38,7 +38,9 @@ jobs:
       - name: Install browser and video encoder
         run: npx playwright install --with-deps chromium ffmpeg
       - name: Configure Karma browser
-        run: node -e "require('node:fs').appendFileSync(process.env.GITHUB_ENV, 'CHROME_BIN=' + require('playwright').chromium.executablePath() + '\n')"
+        run: |
+          chrome_path="$(command -v google-chrome)"
+          printf 'CHROME_BIN=%s\n' "$chrome_path" >> "$GITHUB_ENV"
       - name: Workspace and API contract
         run: |
           npm run check:workspace
@@ -63,7 +65,7 @@ jobs:
         run: node scripts/check-production.mjs
       - name: Upload actual workflow evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: stockflow-browser-evidence
           path: |

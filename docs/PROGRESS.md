@@ -12,7 +12,8 @@
 - [x] Roadmap 63: GitHub Actions configured for replica-set probe, lint/format/typecheck/build, API/Angular/E2E tests, runtime audit and evidence artifacts. Workflow/Compose YAML checks, lint, OpenAPI validation and real local transaction probe passed. Remote run pending push.
 - [x] Roadmap 64: setup/demo/test/architecture README with authentic screenshots/video, seed safeguards, role differences and honest Docker/dependency limitations. Evidence links and setup commands checked.
 - [x] Roadmap 65: compiled full-stack serving, database readiness, production browser probe, clean install and full local release checks. Docker execution remains blocked under the approved local-MongoDB alternative.
-- [ ] Next: normal fast-forward push of the verified release and inspect remote CI.
+- [x] Code release 6ae1810 pushed normally; remote HEAD matched; 67 meaningful new commits at that release.
+- [ ] Next: verify corrected remote CI and publish final evidence report.
 
 ## Checks actually run
 
@@ -23,6 +24,7 @@
 - Real MongoDB 8.0 replica set: commit/rollback, competing confirmations, multi-product rollback, duplicate confirmation and concurrent cancellation passed.
 - Production Chrome probe passed: writable-primary readiness, compiled assets, deep links, login, Secure/HttpOnly/Strict cookies, authenticated navigation and safe missing API/asset behavior. Isolated probe DB cleaned up.
 - OpenAPI 36 operations validated; workflow/Compose YAML checks passed; runtime audit reported zero vulnerabilities.
+- First remote CI actually passed Docker Compose health, real transaction probe, lint/format/typecheck/build and backend tests. Karma launch failed on Ubuntu AppArmor for downloaded Chromium; corrected workflow selects system Google Chrome with its supported sandbox, explicit Ubuntu 24.04 and current action runtimes.
 - Seed actually run on empty local stockflow: 6 products, 4 orders, persisted admin/staff accounts. Refuses nonempty databases.
 - Screenshots/video in docs/screenshots and docs/demo are captured from actual isolated one-product E2E workflow, not the six-product seed.
 
