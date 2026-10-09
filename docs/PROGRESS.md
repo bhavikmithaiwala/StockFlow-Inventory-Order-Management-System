@@ -73,3 +73,5 @@ Latest feature: stock indicators 02a8d10; inventory tests follow in this commit.
 - Roadmap 56: draft fulfillment/processed-edit/price-spoof rejection, inactive confirmation, historical price preservation and whole-cancellation rollback at capacity. 12 real DB order tests passed.
 
 - Roadmap 57: Angular login validation/failure/success, multi-page lookup and cached-user route/session expiry browser tests. 10 ChromeHeadless tests passed.
+
+- Roadmap 58: 2 Playwright workflows passed in installed Chrome with isolated real MongoDB: catalog/receipt/confirm/fulfill/cancel/report CSV and direct staff permission checks. Real screenshots and workflow WebM captured; navigation synchronization issue fixed in test. Evidence is from actual one-product E2E data.
