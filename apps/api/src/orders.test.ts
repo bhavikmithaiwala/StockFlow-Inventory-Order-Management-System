@@ -10,6 +10,7 @@ import { StockMovement } from './models/movement.js';
 import { tokenHash } from './auth.js';
 import { openTestDatabase, closeTestDatabase } from './test-database.js';
 import { createDraft, confirmOrder, cancelOrder } from './services/orders.js';
+import { receiveStock } from './services/inventory.js';
 const token = 'f'.repeat(64);
 const app = createApp();
 let productId: string;
@@ -239,4 +240,79 @@ it('serializes a concurrent double-click on the same order', async () => {
   expect(results.map((result) => result.status).sort()).toEqual([200, 409]);
   expect((await Product.findById(productId))!.quantity).toBe(before - 1);
   expect(await StockMovement.countDocuments({ orderId: draft._id })).toBe(1);
+});
+it('rejects draft fulfillment, processed-order editing and client status/price injection', async () => {
+  const draft = await createDraft({ items: [{ productId, quantity: 1 }] }, actorId);
+  expect(
+    (
+      await request(app)
+        .post(`/api/orders/${draft.id}/fulfill`)
+        .set('Cookie', `sf_session=${token}`)
+        .set('Origin', 'http://localhost:4200')
+        .send({})
+    ).status,
+  ).toBe(409);
+  expect(
+    (
+      await request(app)
+        .patch(`/api/orders/${orderId}`)
+        .set('Cookie', `sf_session=${token}`)
+        .set('Origin', 'http://localhost:4200')
+        .send({ items: [{ productId, quantity: 1 }] })
+    ).status,
+  ).toBe(409);
+  expect(
+    (
+      await request(app)
+        .post('/api/orders')
+        .set('Cookie', `sf_session=${token}`)
+        .set('Origin', 'http://localhost:4200')
+        .send({ items: [{ productId, quantity: 1, unitPriceCents: 1 }] })
+    ).status,
+  ).toBe(400);
+});
+it('rolls back all restoration if one product has reached stock capacity', async () => {
+  const fields = {
+    name: 'Capacity fixture',
+    categoryId: new mongoose.Types.ObjectId(),
+    supplierId: new mongoose.Types.ObjectId(),
+    unitPriceCents: 100,
+    quantity: 5,
+  };
+  const a = await Product.create({
+    ...fields,
+    _id: '333333333333333333333333',
+    skuNormalized: 'CAPACITY-A',
+  });
+  const b = await Product.create({
+    ...fields,
+    _id: '444444444444444444444444',
+    skuNormalized: 'CAPACITY-B',
+  });
+  const order = await createDraft(
+    {
+      items: [
+        { productId: a.id, quantity: 2 },
+        { productId: b.id, quantity: 2 },
+      ],
+    },
+    actorId,
+  );
+  await confirmOrder(order.id, actorId);
+  await receiveStock({ productId: b.id, quantity: 999997, reason: 'Capacity delivery' }, actorId);
+  await expect(cancelOrder(order.id, 'Attempt restoration', actorId)).rejects.toThrow('capacity');
+  expect((await Product.findById(a.id))!.quantity).toBe(3);
+  expect((await Product.findById(b.id))!.quantity).toBe(1000000);
+  expect((await Order.findById(order.id))!.status).toBe('confirmed');
+  expect(await StockMovement.countDocuments({ orderId: order._id, type: 'order-cancelled' })).toBe(
+    0,
+  );
+});
+it('rejects inactive confirmation and preserves historical locked prices', async () => {
+  const draft = await createDraft({ items: [{ productId, quantity: 1 }] }, actorId);
+  await Product.updateOne({ _id: productId }, { active: false, unitPriceCents: 999 });
+  await expect(confirmOrder(draft.id, actorId)).rejects.toThrow('inactive');
+  expect((await Order.findById(draft.id))!.status).toBe('draft');
+  expect(await StockMovement.countDocuments({ orderId: draft._id })).toBe(0);
+  expect((await Order.findById(orderId))!.items[0]!.unitPriceCents).toBe(450);
 });

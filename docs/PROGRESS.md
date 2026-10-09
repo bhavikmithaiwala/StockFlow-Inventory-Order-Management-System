@@ -69,3 +69,5 @@ Latest feature: stock indicators 02a8d10; inventory tests follow in this commit.
 - Roadmap 54 plus required account screens: real admin Users UI, own-profile/settings persistence, applied catalog/order page-size preference and admin route guard. Both builds and 8 auth/RBAC tests passed, including login limit, missing Origin and profile role-spoof rejection.
 
 - Roadmap 55: duplicate SKU, spoofed stock, invalid/fractional money, malformed ID and missing-reference API coverage. 3 real product API tests passed.
+
+- Roadmap 56: draft fulfillment/processed-edit/price-spoof rejection, inactive confirmation, historical price preservation and whole-cancellation rollback at capacity. 12 real DB order tests passed.
