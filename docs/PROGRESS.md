@@ -59,3 +59,5 @@ Latest feature: stock indicators 02a8d10; inventory tests follow in this commit.
 - Roadmap 49: actual category aggregation and accessible meter charts for order statuses/category units with text values. Both builds and dashboard DB test passed.
 
 - Roadmap 50: inventory valuation/low-stock report with category/supplier/activity filters, full-filter totals and paginated rows. Build and 2 report/dashboard DB tests passed.
+
+- Roadmap 51: filtered paginated order and movement reports with validated UTC date ranges, statuses, product/type filters and populated audit references. Build and 3 real report tests passed.

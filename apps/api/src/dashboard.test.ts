@@ -66,3 +66,31 @@ it('reports inventory valuation and low-stock filters with whole cents', async (
     ).body.meta.total,
   ).toBe(0);
 });
+it('filters order status and movement type/date reports', async () => {
+  const app = createApp();
+  const orders = await request(app)
+    .get('/api/reports/orders?status=draft')
+    .set('Cookie', `sf_session=${token}`);
+  expect(orders.status).toBe(200);
+  expect(orders.body.meta.total).toBe(1);
+  expect(orders.body.data[0].totalCents).toBe(700);
+  expect(
+    (
+      await request(app)
+        .get('/api/reports/orders?status=fulfilled')
+        .set('Cookie', `sf_session=${token}`)
+    ).body.meta.total,
+  ).toBe(0);
+  const movements = await request(app)
+    .get('/api/reports/stock-movements?type=receipt&from=2020-01-01&to=2099-01-01')
+    .set('Cookie', `sf_session=${token}`);
+  expect(movements.status).toBe(200);
+  expect(movements.body.data[0].delta).toBe(3);
+  expect(
+    (
+      await request(app)
+        .get('/api/reports/stock-movements?from=invalid')
+        .set('Cookie', `sf_session=${token}`)
+    ).status,
+  ).toBe(400);
+});
