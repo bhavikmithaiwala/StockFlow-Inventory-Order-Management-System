@@ -9,7 +9,8 @@
 - [x] Roadmap 54–60: Users/Settings, persisted preferences, hardening, expanded tests, authentic browser evidence and non-destructive demo seed.
 - [x] Roadmap 61: validated OpenAPI contract covering 35 operations, served publicly, with cookie-session workflow examples. API build and 5 foundation tests passed.
 - [x] Roadmap 62: documented actual models, indexes, transaction invariants, RBAC, security and operational limitations; checked against source and real concurrency tests.
-- [ ] Roadmap 63–65: CI, README and full release verification (next).
+- [x] Roadmap 63: GitHub Actions configured for replica-set probe, lint/format/typecheck/build, API/Angular/E2E tests, runtime audit and evidence artifacts. Workflow/Compose YAML checks, lint, OpenAPI validation and real local transaction probe passed. Remote run pending push.
+- [ ] Roadmap 64–65: README and full release verification (next).
 
 ## Checks actually run
 
