@@ -29,3 +29,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Roadmap 6: responsive application shell, skip link, main landmark and adaptive sidebar. Angular production build passed; database setup commit: 2da94a6.
 
 - Roadmap 7: lazy navigation and live system overview with retry, loading and API failure states; unknown routes redirect safely. Production build passed. Shell commit: 9aa5a34. Authenticated navigation follows auth integration rather than fabricated session state.
+
+- Roadmap 8: accessible color/form/table tokens, visible keyboard focus, reduced-motion support. Production build and 2 ChromeHeadless tests passed. Navigation commit: 8547e5f. Phase 1 complete with Docker verification explicitly blocked; local replica-set transactions verified.

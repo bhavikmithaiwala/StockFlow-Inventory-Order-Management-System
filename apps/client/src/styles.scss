@@ -1,1 +1,111 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  color-scheme: light;
+  --ink: #17323b;
+  --muted: #4c6670;
+  --surface: #ffffff;
+  --canvas: #f3f7f8;
+  --border: #cbd9dd;
+  --primary: #09665c;
+  --danger: #a51d35;
+  --radius: 0.75rem;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: system-ui, sans-serif;
+  line-height: 1.55;
+}
+a {
+  color: var(--primary);
+  text-underline-offset: 0.2em;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+  border: 1px solid var(--primary);
+  background: var(--primary);
+  color: white;
+  padding: 0.65rem 1rem;
+  border-radius: 0.4rem;
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+  background: var(--surface);
+  color: var(--ink);
+}
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+:focus-visible {
+  outline: 3px solid #cc6b05;
+  outline-offset: 3px;
+}
+.panel {
+  padding: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin: 1rem 0;
+}
+.error {
+  color: var(--danger);
+}
+.muted {
+  color: var(--muted);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 1rem;
+}
+.table-scroll {
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th,
+td {
+  text-align: left;
+  padding: 0.8rem;
+  border-bottom: 1px solid var(--border);
+}
+th {
+  font-weight: 650;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
