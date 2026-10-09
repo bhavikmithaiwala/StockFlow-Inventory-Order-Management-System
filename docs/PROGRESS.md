@@ -27,3 +27,5 @@
 
 Run `git log --reverse --oneline 09b8d2c..HEAD` for actual incremental hashes.
 Latest feature: stock indicators 02a8d10; inventory tests follow in this commit.
+
+- Roadmap 35: indexed order/line/history model, legal state transitions and safe integer totals. Build and domain test passed. Inventory test milestone: 65d6b30.
