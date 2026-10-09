@@ -23,3 +23,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Angular build/test sandbox access failures were resolved by executing with approved filesystem access.
 
 - Roadmap 4: shared ESLint TypeScript/Angular template accessibility, Prettier and workspace typecheck scripts. Both workspace lint and typecheck passed. API foundation: c19ed7d.
+
+- Roadmap 5: Compose replica-set configuration, isolated Windows startup/init scripts, API replica-set enforcement. Real MongoDB 8.0 primary established on 27018; multi-document commit/rollback probe passed. Docker startup unverified by user-approved exception. Lint tooling commit: 7f1acd3.

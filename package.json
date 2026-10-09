@@ -6,8 +6,8 @@
     "apps/*"
   ],
   "engines": {
-    "node": "\u003e=22.13.0",
-    "npm": "\u003e=10"
+    "node": ">=22.13.0",
+    "npm": ">=10"
   },
   "scripts": {
     "dev:client": "npm run dev --workspace @stockflow/client",
@@ -18,12 +18,14 @@
     "test": "npm run test --workspaces --if-present",
     "check:workspace": "node scripts/check-workspace.mjs",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "db:init": "node scripts/init-replica.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
     "angular-eslint": "^20.7.0",
     "eslint": "^9.39.5",
+    "mongodb": "^6.21.0",
     "prettier": "^3.9.9",
     "typescript": "~5.9.2",
     "typescript-eslint": "^8.71.1"
