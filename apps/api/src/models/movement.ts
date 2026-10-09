@@ -35,7 +35,17 @@ const schema = new Schema(
 );
 schema.index({ productId: 1, createdAt: -1 });
 schema.index({ type: 1, createdAt: -1 });
+schema.index(
+  { orderId: 1, productId: 1, type: 1 },
+  { unique: true, partialFilterExpression: { orderId: { $type: 'objectId' } } },
+);
 schema.pre('validate', function () {
+  if (['receipt', 'order-cancelled'].includes(this.type) && this.delta <= 0)
+    this.invalidate('delta', 'Movement type requires a positive delta');
+  if (this.type === 'order-confirmed' && this.delta >= 0)
+    this.invalidate('delta', 'Confirmation requires a negative delta');
+  if (this.type.startsWith('order-') && !this.orderId)
+    this.invalidate('orderId', 'Order movement requires an order reference');
   if (this.afterQuantity - this.beforeQuantity !== this.delta)
     this.invalidate('delta', 'Movement quantities must reconcile');
 });

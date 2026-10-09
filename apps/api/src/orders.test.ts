@@ -137,3 +137,19 @@ it('allows only one competing confirmation for the last five units', async () =>
   ).toBe(1);
   expect(await Order.countDocuments({ _id: { $in: [a._id, b._id] }, status: 'draft' })).toBe(1);
 });
+it('enforces unique per-product order movements in the database', async () => {
+  const movement = await StockMovement.findOne({ orderId, type: 'order-confirmed' });
+  await expect(
+    StockMovement.create({
+      productId: movement!.productId,
+      orderId: movement!.orderId,
+      actorId: movement!.actorId,
+      type: movement!.type,
+      delta: movement!.delta,
+      beforeQuantity: movement!.beforeQuantity,
+      afterQuantity: movement!.afterQuantity,
+      reason: 'Duplicate attempt',
+    }),
+  ).rejects.toMatchObject({ code: 11000 });
+  expect(await StockMovement.countDocuments({ orderId })).toBe(1);
+});

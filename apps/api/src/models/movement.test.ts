@@ -15,4 +15,7 @@ it('rejects ledger entries that do not reconcile', async () => {
     'reconcile',
   );
   await expect(StockMovement.updateOne({}, { reason: 'Tamper' })).rejects.toThrow('append-only');
+  await expect(
+    new StockMovement({ ...base, type: 'order-confirmed' }).validate(),
+  ).rejects.toThrow();
 });
