@@ -23,9 +23,7 @@ export const errorHandler: ErrorRequestHandler = (error: unknown, _req, res, _ne
           : duplicate
             ? new ApiError(409, 'DUPLICATE_VALUE', 'A unique value already exists')
             : new ApiError(500, 'INTERNAL_ERROR', 'Unexpected server error');
-  res
-    .status(known.status)
-    .json({
-      error: { code: known.code, message: known.message, requestId: res.locals['requestId'] },
-    });
+  res.status(known.status).json({
+    error: { code: known.code, message: known.message, requestId: res.locals['requestId'] },
+  });
 };

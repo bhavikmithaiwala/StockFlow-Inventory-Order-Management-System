@@ -61,15 +61,13 @@ const loginLimit = rateLimit({
   standardHeaders: 'draft-8',
   legacyHeaders: false,
   handler: (_req, res) =>
-    res
-      .status(429)
-      .json({
-        error: {
-          code: 'LOGIN_RATE_LIMIT',
-          message: 'Too many login attempts; try again later',
-          requestId: res.locals['requestId'],
-        },
-      }),
+    res.status(429).json({
+      error: {
+        code: 'LOGIN_RATE_LIMIT',
+        message: 'Too many login attempts; try again later',
+        requestId: res.locals['requestId'],
+      },
+    }),
 });
 authRouter.post('/login', loginLimit, async (req, res) => {
   const input = z

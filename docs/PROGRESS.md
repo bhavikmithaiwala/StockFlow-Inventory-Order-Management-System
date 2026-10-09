@@ -39,3 +39,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Roadmap 11: login/logout/me API, hashed opaque cookies, origin defense and central safe errors. API compilation and 2 real-MongoDB auth tests passed (login/me/logout, wrong credentials, foreign origin). Password provisioning commit: a1c2566.
 
 - Roadmap 12: login rate limit, session last-used tracking, stronger scrypt work factor, expiry/deactivated/forged-cookie tests. API build and 5 targeted tests passed. Auth endpoints commit: 4addad5.
+
+- Roadmap 13: backend role middleware and paginated admin user management, staff provisioning and lockout protection. API build and 2 real-database RBAC tests passed. Session security: f83ff7f.

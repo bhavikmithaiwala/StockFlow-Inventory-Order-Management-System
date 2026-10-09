@@ -2,6 +2,7 @@ import express from 'express';
 import { randomUUID } from 'node:crypto';
 import { authRouter, checkOrigin } from './auth.js';
 import { errorHandler } from './errors.js';
+import { usersRouter } from './users.js';
 
 export function createApp() {
   const app = express();
@@ -15,6 +16,7 @@ export function createApp() {
   app.get('/api/health', (_req, res) => res.json({ data: { status: 'ok' } }));
   app.use(checkOrigin);
   app.use('/api/auth', authRouter);
+  app.use('/api/users', usersRouter);
   app.use((_req, res) =>
     res.status(404).json({
       error: {
