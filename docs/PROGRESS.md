@@ -65,3 +65,5 @@ No application tests or production builds have run yet. Existing `.vscode` files
 - Roadmap 24: create/edit reactive product forms, paginated category/supplier lookup, active flag, integer validation and API error display. Angular build passed. Product views: ff35faf.
 
 - Roadmap 25: real category/supplier management screens with pagination, admin create/edit/deactivate forms and contact details. Both builds and full lint passed; phase 3 catalog gate complete.
+
+- Roadmap 26: append-only audited stock ledger with reconciliation validation and mutation guards. Build and ledger test passed. Catalog UI milestone: f726a24.
