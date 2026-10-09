@@ -5,10 +5,11 @@ import { RouterLink } from '@angular/router';
 import { Api, type Page } from './api';
 import { ProductRecord } from './catalog-types';
 import { SessionState } from './session';
+import { StockStatus } from './stock-status';
 
 @Component({
   selector: 'app-product-list',
-  imports: [FormsModule, CurrencyPipe, RouterLink],
+  imports: [FormsModule, CurrencyPipe, RouterLink, StockStatus],
   template: `
     <h2>Products</h2>
     <form class="panel form-grid" (ngSubmit)="load(1)">
@@ -70,7 +71,14 @@ import { SessionState } from './session';
                   >
                 </td>
                 <td>{{ product.unitPriceCents / 100 | currency: 'USD' }}</td>
-                <td>{{ product.quantity }}</td>
+                <td>
+                  {{ product.quantity }}
+                  <app-stock-status
+                    [quantity]="product.quantity"
+                    [reorderLevel]="product.reorderLevel"
+                    [active]="product.active"
+                  />
+                </td>
                 <td>{{ product.active ? 'Active' : 'Inactive' }}</td>
               </tr>
             } @empty {

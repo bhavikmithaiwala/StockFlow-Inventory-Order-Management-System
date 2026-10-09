@@ -4,10 +4,11 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Api, type Result } from './api';
 import { ProductRecord } from './catalog-types';
 import { SessionState } from './session';
+import { StockStatus } from './stock-status';
 
 @Component({
   selector: 'app-product-detail',
-  imports: [CurrencyPipe, RouterLink],
+  imports: [CurrencyPipe, RouterLink, StockStatus],
   template: `
     <a routerLink="/products">Back to products</a>
     @if (error()) {
@@ -22,7 +23,14 @@ import { SessionState } from './session';
           <dt>Unit price</dt>
           <dd>{{ item.unitPriceCents / 100 | currency: 'USD' }}</dd>
           <dt>Quantity</dt>
-          <dd>{{ item.quantity }}</dd>
+          <dd>
+            {{ item.quantity }}
+            <app-stock-status
+              [quantity]="item.quantity"
+              [reorderLevel]="item.reorderLevel"
+              [active]="item.active"
+            />
+          </dd>
           <dt>Reorder level</dt>
           <dd>{{ item.reorderLevel }}</dd>
           <dt>Activity</dt>
