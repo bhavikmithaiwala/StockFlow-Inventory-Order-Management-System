@@ -21,7 +21,7 @@ Requirements: Node.js 22.13 or newer supported Node 22 release, npm 10+, MongoDB
 
 ```powershell
 npm ci
-Copy-Item .env.example .env
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
 ```
 
 Start isolated MongoDB on 27018. The script defaults to the installed MongoDB 8.0 executable and stores data/logs in ignored `tools/mongodb/`. It leaves the separate Windows service on 27017 untouched:
@@ -41,7 +41,7 @@ On an **empty** local database, seed six products, three categories, two supplie
 npm run seed
 ```
 
-The seed refuses nonempty databases and is restricted to local development MongoDB on 27018. This workstation's `stockflow` database has already been seeded; start the app directly here. For an unseeded local setup, `npm run provision:admin --workspace @stockflow/api` creates an admin using `ADMIN_EMAIL`, `ADMIN_NAME` and `ADMIN_PASSWORD` environment variables (password at least twelve characters). Provisioning refuses production and existing accounts.
+The seed refuses nonempty databases and is restricted to local development MongoDB on 27018. This workstation's existing `.env` selects the already-seeded `StockFlow-Inventory-Order-Management-System` database; preserve that file and start the app directly here. Fresh example configuration defaults to `stockflow`. For an unseeded local setup, `npm run provision:admin --workspace @stockflow/api` creates an admin using `ADMIN_EMAIL`, `ADMIN_NAME` and `ADMIN_PASSWORD` (at least twelve characters). Provisioning refuses production and existing accounts.
 
 Start API and Angular in two terminals:
 
@@ -72,7 +72,7 @@ node scripts/check-replica.mjs
 npm run seed
 ```
 
-Compose defines MongoDB 8.0 with `rs0`, persistent volume, loopback port mapping and primary health check. **Docker execution is unverified on this workstation:** Docker Desktop is absent; the user approved local MongoDB. [CI](docs/CI.md) exercises Compose on Linux once pushed. YAML validation does not establish container startup.
+Compose defines MongoDB 8.0 with rs0, a persistent volume, loopback port mapping and primary health check. **Local Docker execution remains blocked:** Docker Desktop is absent; the user approved local MongoDB. [Successful Linux CI](https://github.com/bhavikmithaiwala/StockFlow-Inventory-Order-Management-System/actions/runs/37944373998) independently verified Compose health and real transactions, plus all build/backend/Angular/E2E/production-browser checks. YAML validation alone does not establish container startup.
 
 Compiled full-stack startup is documented in [PRODUCTION.md](docs/PRODUCTION.md). `node scripts/check-production.mjs` verifies the built application in a real browser on an isolated database.
 

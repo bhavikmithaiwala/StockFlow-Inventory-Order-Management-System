@@ -1,6 +1,6 @@
 ﻿# StockFlow incremental commit inventory
 
-66 actual new commits after preserved initial commit 09b8d2c. Author and committer timestamps come directly from Git.
+68 actual new commits after preserved initial commit 09b8d2c. Author and committer timestamps come directly from Git.
 
 | #   | Hash    | Author date               | Committer date            | Change                                                                     |
 | --- | ------- | ------------------------- | ------------------------- | -------------------------------------------------------------------------- |
@@ -70,5 +70,7 @@
 | 64  | dc72533 | 2026-10-09T10:10:22-04:00 | 2026-10-09T10:10:22-04:00 | fix: upgrade vulnerable test runtime and document dependency audit         |
 | 65  | d9b5c4a | 2026-10-09T10:11:08-04:00 | 2026-10-09T10:11:08-04:00 | ci: run Angular API lint build and tests on GitHub Actions                 |
 | 66  | 8214375 | 2026-10-09T10:13:39-04:00 | 2026-10-09T10:13:39-04:00 | docs: write recruiter-ready README with verified screenshots               |
+| 67  | 6ae1810 | 2026-10-09T10:23:07-04:00 | 2026-10-09T10:23:07-04:00 | chore: verify local replica set and full-stack production readiness        |
+| 68  | 4783bb5 | 2026-10-09T10:27:56-04:00 | 2026-10-09T10:27:56-04:00 | fix: use supported sandboxed Chrome and current CI runners                 |
 
 This is a generated snapshot. Run `node scripts/commit-report.mjs` for the complete current inventory, including the release commit containing this file. Full published history: https://github.com/bhavikmithaiwala/StockFlow-Inventory-Order-Management-System/commits/main
