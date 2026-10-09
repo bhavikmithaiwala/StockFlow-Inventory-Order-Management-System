@@ -90,3 +90,19 @@ it('allows staff receipts but denies adjustment and actor spoofing at the API', 
     ).status,
   ).toBe(400);
 });
+it('filters and paginates movement history with populated product and actor', async () => {
+  const res = await request(createApp())
+    .get(`/api/inventory/movements?type=receipt&productId=${productId}&limit=1`)
+    .set('Cookie', `sf_session=${'e'.repeat(64)}`);
+  expect(res.status).toBe(200);
+  expect(res.body.meta.total).toBe(2);
+  expect(res.body.data).toHaveLength(1);
+  expect(res.body.data[0].productId.skuNormalized).toBe('STOCK-1');
+  expect(
+    (
+      await request(createApp())
+        .get('/api/inventory/movements?from=2026-12-01&to=2026-01-01')
+        .set('Cookie', `sf_session=${'e'.repeat(64)}`)
+    ).status,
+  ).toBe(400);
+});

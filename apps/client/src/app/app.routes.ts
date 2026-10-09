@@ -3,6 +3,12 @@ import { authenticated } from './auth-guard';
 
 export const routes: Routes = [
   {
+    path: 'movements',
+    canActivate: [authenticated],
+    loadComponent: () => import('./movements').then((m) => m.Movements),
+    title: 'Movements | StockFlow',
+  },
+  {
     path: 'inventory',
     canActivate: [authenticated],
     loadComponent: () => import('./inventory-form').then((m) => m.InventoryForm),
